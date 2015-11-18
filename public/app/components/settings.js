@@ -19,6 +19,7 @@ function (_) {
         'singlestat': { path: 'app/panels/singlestat', name: 'Single stat' },
         'text':       { path: 'app/panels/text',       name: 'Text' },
         'dashlist':   { path: 'app/panels/dashlist',   name: 'Dashboard list' },
+        'triggers':   { path: 'app/panels/triggers',   name: 'Zabbix triggers' },
       },
       new_panel_title: 'no title (click here)',
       plugins: {},

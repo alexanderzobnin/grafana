@@ -531,6 +531,41 @@ function (angular, _) {
       return this.performZabbixAPIRequest('service.getsla', params);
     };
 
+    p.getTriggers = function(limit) {
+      var params = {
+        output: 'extend',
+        expandDescription: true,
+        expandData: true,
+        monitored: true,
+        //only_true: true,
+        filter: {
+          value: 1
+        },
+        limit: limit,
+        sortfield: 'lastchange',
+        sortorder: 'DESC'
+      };
+
+      return this.performZabbixAPIRequest('trigger.get', params);
+    };
+
+    p.getAcknowledges = function(triggerids, from) {
+      var params = {
+        output: 'extend',
+        objectids: triggerids,
+        acknowledged: true,
+        select_acknowledges: 'extend',
+        sortfield: 'clock',
+        sortorder: 'DESC',
+        time_from: from
+      };
+
+      return this.performZabbixAPIRequest('event.get', params)
+        .then(function (events) {
+          return _.flatten(_.map(events, 'acknowledges'));
+        });
+    };
+
     return ZabbixAPI;
 
   });

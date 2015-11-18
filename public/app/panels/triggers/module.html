@@ -1,0 +1,103 @@
+<grafana-panel>
+  <div style="padding-top: 10px">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Host</th>
+          <th style="width: 50%">Issue</th>
+          <th ng-if="panel.lastChangeField">Last change</th>
+          <th ng-if="panel.ageField">Age</th>
+          <th ng-if="panel.infoField">Info</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="" ng-repeat="trigger in triggerList">
+          <td style="border-top-width: 1px">
+            <span><strong>{{trigger.host}}</strong></span>
+          </td>
+          <td style="border-top-width: 1px;
+                     padding: 2px">
+            <div style="background-color: {{trigger.color}};
+                        color: #020202;
+                        padding: 6px;
+                        border-radius: 2px">
+              {{trigger.description}}
+              <a ng-if="trigger.comments"
+                 class="pointer"
+                 style="float: right; color: #101010"
+                 data-toggle="collapse"
+                 data-target="#comments-{{trigger.triggerid}}"
+                 bs-tooltip="'Show additional trigger description'"
+                 data-placement="top">
+                <i class="fa fa-file-text-o"></i>
+              </a>
+            </div>
+            <!-- Trigger comments -->
+            <div ng-if="trigger.comments" id="comments-{{trigger.triggerid}}" class="collapse">
+              <div style="padding: 8px">
+                <small>{{trigger.comments}}</small>
+              </div>
+            </div>
+            <!-- Trigger acknowledges -->
+            <div ng-if="trigger.acknowledges" id="acknowledges-{{trigger.triggerid}}" class="collapse">
+              <div style="padding-top: 12px;">
+                <table class="table table-condensed table-striped table-bordered"
+                       style="background-color: initial">
+                  <thead>
+                    <tr>
+                      <th><small>Time</small></th>
+                      <th><small>User</small></th>
+                      <th><small>Comments</small></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="ack in trigger.acknowledges">
+                      <td>
+                        <small>{{ack.time}}</small>
+                      </td>
+                      <td>
+                        <small>{{ack.user}}</small>
+                      </td>
+                      <td>
+                        <small>{{ack.message}}</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </td>
+          <td ng-if="panel.lastChangeField">
+            {{trigger.lastchange}}
+          </td>
+          <td ng-if="panel.ageField">
+            {{trigger.age}}
+          </td>
+          <td ng-if="panel.infoField">
+            <!-- Trigger Url -->
+            <a ng-if="trigger.url" href="{{trigger.url}}" target="_blank">
+              <span style="padding: 4px">
+                <i class="fa fa-external-link"></i>
+              </span>
+            </a>
+            <!-- Trigger state -->
+            <span ng-if="trigger.state === '1'"
+                  bs-tooltip="'{{trigger.error}}'"
+                  style="padding: 4px">
+              <i class="fa fa-question-circle"></i>
+            </span>
+            <!-- Trigger acknowledges -->
+            <a ng-if="trigger.acknowledges"
+                  bs-tooltip="'Acknowledges ({{trigger.acknowledges.length}})'"
+                  data-toggle="collapse"
+                  data-target="#acknowledges-{{trigger.triggerid}}">
+              <span style="padding: 4px">
+                <i class="fa fa-comments"></i>
+              </span>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</grafana-panel>

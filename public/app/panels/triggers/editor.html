@@ -1,0 +1,48 @@
+
+<div class="editor-row">
+  <h5>Select triggers</h5>
+  <div class="editor-option">
+    <label class="small">Group</label>
+    <input type="text" class="input-medium" ng-model='currentAnnotation.group'></input>
+  </div>
+  <div class="editor-option">
+    <label class="small">Host</label>
+    <input type="text" class="input-medium" ng-model='currentAnnotation.host'></input>
+  </div>
+  <div class="editor-option">
+    <label class="small">Application</label>
+    <input type="text" class="input-medium" ng-model='currentAnnotation.trigger' placeholder=""></input>
+  </div>
+</div>
+
+<div class="editor-row">
+  <div class="section" style="margin-bottom: 20px">
+    <h5>Show fields</h5>
+    <div class="editor-option">
+      <editor-opt-bool text="Last change" model="panel.lastChangeField"></editor-opt-bool>
+    </div>
+    <div class="editor-option">
+      <editor-opt-bool text="Age" model="panel.ageField"></editor-opt-bool>
+    </div>
+    <div class="editor-option">
+      <editor-opt-bool text="Info" model="panel.infoField"></editor-opt-bool>
+    </div>
+  </div>
+</div>
+
+<div class="editor-row">
+  <div class="section" style="margin-bottom: 20px">
+    <div class="tight-form">
+      <ul class="tight-form-list">
+        <li class="tight-form-item" style="width: 12em">
+          <strong>Limit triggers number to</strong>
+        </li>
+        <li>
+          <input class="input-small tight-form-input last" type="number" ng-model="panel.limit" ng-model-onblur ng-change="get_data()">
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
