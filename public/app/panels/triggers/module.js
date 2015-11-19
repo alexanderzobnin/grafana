@@ -30,10 +30,31 @@ function (angular, app, _, config, PanelMeta) {
     $scope.panelMeta.addEditorTab('Options', 'app/panels/triggers/editor.html');
 
     var defaults = {
+      severityField: false,
       lastChangeField: true,
       ageField: true,
       infoField: true,
-      limit: 10
+      limit: 10,
+      showTriggers: {text: 'All triggers', value: 'all'},
+    };
+
+    var triggerColors = {
+      0: '#DBDBDB',
+      1: '#D6F6FF',
+      2: '#FFF6A5',
+      //3: 'rgb(137, 15, 2)',
+      3: '#FFB689',
+      4: '#FF9999',
+      5: '#FF3838',
+    };
+
+    var triggerSeverity = {
+      0: 'Not classified',
+      1: 'Information',
+      2: 'Warning',
+      3: 'Average',
+      4: 'High',
+      5: 'Disaster',
     };
 
     _.defaults($scope.panel, defaults);
@@ -49,15 +70,6 @@ function (angular, app, _, config, PanelMeta) {
 
     $scope.refreshData = function() {
 
-      var triggerColors = {
-        0: '#DBDBDB',
-        1: '#D6F6FF',
-        2: '#FFF6A5',
-        //3: 'rgb(137, 15, 2)',
-        3: '#FFB689',
-        4: '#FF9999',
-        5: '#FF3838',
-      };
       $scope.triggerColors = triggerColors;
 
       return $scope.datasource.zabbixAPI.getTriggers($scope.panel.limit)
@@ -74,6 +86,7 @@ function (angular, app, _, config, PanelMeta) {
             triggerObj.lastchange = lastchange.toLocaleString();
             triggerObj.age = age.toLocaleString();
             triggerObj.color = triggerColors[trigger.priority];
+            triggerObj.severity = triggerSeverity[trigger.priority];
 
             // Request acknowledges for trigger
             return $scope.datasource.zabbixAPI.getAcknowledges(trigger.triggerid, lastchangeUnix)
@@ -90,7 +103,15 @@ function (angular, app, _, config, PanelMeta) {
               });
           });
           return $q.all(promises).then(function (triggerList) {
-            $scope.triggerList = triggerList;
+            if ($scope.panel.showTriggers.value === 'unack') {
+              $scope.triggerList = _.filter(triggerList, function (trigger) {
+                return !trigger.acknowledges;
+              });
+            } else if ($scope.panel.showTriggers.value === 'ack') {
+              $scope.triggerList = _.filter(triggerList, 'acknowledges');
+            } else {
+              $scope.triggerList = triggerList;
+            }
             $scope.panelRenderingComplete();
           });
         });

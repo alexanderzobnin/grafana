@@ -4,6 +4,7 @@
       <thead>
         <tr>
           <th>Host</th>
+          <th ng-if="panel.severityField">Severity</th>
           <th style="width: 50%">Issue</th>
           <th ng-if="panel.lastChangeField">Last change</th>
           <th ng-if="panel.ageField">Age</th>
@@ -14,6 +15,16 @@
         <tr class="" ng-repeat="trigger in triggerList">
           <td style="border-top-width: 1px">
             <span><strong>{{trigger.host}}</strong></span>
+          </td>
+          <td ng-if="panel.severityField"
+              style="border-top-width: 1px;
+                     padding: 2px">
+            <div style="background-color: {{trigger.color}};
+                        color: #020202;
+                        padding: 6px;
+                        border-radius: 2px">
+              {{trigger.severity}}
+            </div>
           </td>
           <td style="border-top-width: 1px;
                      padding: 2px">
