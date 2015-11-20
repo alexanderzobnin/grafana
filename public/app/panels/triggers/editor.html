@@ -1,56 +1,70 @@
-
 <div class="editor-row">
   <h5>Select triggers</h5>
-  <div class="editor-option">
-    <label class="small">Group</label>
-    <input type="text" class="input-medium" ng-model='currentAnnotation.group'></input>
-  </div>
-  <div class="editor-option">
-    <label class="small">Host</label>
-    <input type="text" class="input-medium" ng-model='currentAnnotation.host'></input>
-  </div>
-  <div class="editor-option">
-    <label class="small">Application</label>
-    <input type="text" class="input-medium" ng-model='currentAnnotation.trigger' placeholder=""></input>
-  </div>
-</div>
-<div class="editor-row">
-  <div class="editor-option">
-    <label class="small">Acknowledged</label>
-    <select class="input-medium"
-            ng-model="panel.showTriggers"
-            ng-options="f.text for f in [
-              {text: 'All triggers', value: 'all'},
-              {text: 'Unacknowledged', value: 'unack'},
-              {text: 'Acknowledged', value: 'ack'}
-            ] track by f.value"
-            ng-change="refreshData()">
-    </select>
-  </div>
-</div>
-
-<div class="editor-row">
-  <div class="section" style="margin-bottom: 20px">
-    <h5>Show fields</h5>
-    <div class="editor-option">
-      <editor-opt-bool text="Severity" model="panel.severityField"></editor-opt-bool>
-    </div>
-    <div class="editor-option">
-      <editor-opt-bool text="Last change" model="panel.lastChangeField"></editor-opt-bool>
-    </div>
-    <div class="editor-option">
-      <editor-opt-bool text="Age" model="panel.ageField"></editor-opt-bool>
-    </div>
-    <div class="editor-option">
-      <editor-opt-bool text="Info" model="panel.infoField"></editor-opt-bool>
-    </div>
-  </div>
-</div>
-
-<div class="editor-row">
-  <div class="section" style="margin-bottom: 20px">
-    <div class="tight-form last">
+  <div class="section tight-form-container" style="margin-bottom: 20px">
+    <div class="tight-form">
       <ul class="tight-form-list">
+        <li class="tight-form-item" style="width: 80px">
+          Group
+        </li>
+        <li>
+          <input type="text" class="input-large tight-form-input"
+            empty-to-null ng-model="trigger.group" valid-time-span
+            ng-change="get_data()" ng-model-onblur>
+        </li>
+        <li class="tight-form-item" style="width: 50px">
+          Host
+        </li>
+        <li>
+          <input type="text" class="input-large tight-form-input last"
+            empty-to-null ng-model="trigger.host" valid-time-span
+            ng-change="get_data()" ng-model-onblur>
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+    <div class="tight-form">
+      <ul class="tight-form-list">
+        <li class="tight-form-item" style="width: 80px">
+          Application
+        </li>
+        <li>
+          <input type="text" class="input-large tight-form-input"
+            empty-to-null ng-model="trigger.application" valid-time-span
+            ng-change="get_data()" ng-model-onblur>
+        </li>
+        <li class="tight-form-item" style="width: 50px">
+          Trigger
+        </li>
+        <li>
+          <input type="text" class="input-large tight-form-input last" placeholder="trigger name"
+            empty-to-null ng-model="trigger.name" valid-time-span
+            ng-change="get_data()" ng-model-onblur>
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+<div class="editor-row">
+  <h5>Options</h5>
+  <div class="section tight-form-container" style="margin-bottom: 20px">
+    <div class="tight-form">
+      <ul class="tight-form-list">
+        <li class="tight-form-item" style="width: 100px">
+          <strong>Acknowledged</strong>
+        </li>
+        <li>
+          <select class="input-medium tight-form-input"
+                  ng-model="panel.showTriggers"
+                  ng-options="f.text for f in [
+                    {text: 'All triggers', value: 'all'},
+                    {text: 'Unacknowledged', value: 'unack'},
+                    {text: 'Acknowledged', value: 'ack'}
+                  ] track by f.value"
+                  ng-change="refreshData()">
+          </select>
+        </li>
         <li class="tight-form-item" style="width: 12em">
           <strong>Limit triggers number to</strong>
         </li>
@@ -60,6 +74,33 @@
       </ul>
       <div class="clearfix"></div>
     </div>
+    <div class="tight-form">
+      <ul class="tight-form-list">
+        <li class="tight-form-item" style="width: 100px">
+          <strong>Show fields</strong>
+        </li>
+        <li class="tight-form-item">
+          <label class="checkbox-label" for="panel.severityField">Severity</label>
+          <input class="cr1" id="panel.severityField" type="checkbox" ng-model="panel.severityField" ng-checked="panel.severityField">
+          <label for="panel.severityField" class="cr1"></label>
+        </li>
+        <li class="tight-form-item">
+          <label class="checkbox-label" for="panel.lastChangeField">Last change</label>
+          <input class="cr1" id="panel.lastChangeField" type="checkbox" ng-model="panel.lastChangeField" ng-checked="panel.lastChangeField">
+          <label for="panel.lastChangeField" class="cr1"></label>
+        </li>
+        <li class="tight-form-item">
+          <label class="checkbox-label" for="panel.ageField">Age</label>
+          <input class="cr1" id="panel.ageField" type="checkbox" ng-model="panel.ageField" ng-checked="panel.ageField">
+          <label for="panel.ageField" class="cr1"></label>
+        </li>
+        <li class="tight-form-item last">
+          <label class="checkbox-label" for="panel.infoField">Info</label>
+          <input class="cr1" id="panel.infoField" type="checkbox" ng-model="panel.infoField" ng-checked="panel.infoField">
+          <label for="panel.infoField" class="cr1"></label>
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
   </div>
 </div>
-
