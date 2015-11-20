@@ -57,11 +57,11 @@
         <li>
           <select class="input-medium tight-form-input"
                   ng-model="panel.showTriggers"
-                  ng-options="f.text for f in [
-                    {text: 'All triggers', value: 'all'},
-                    {text: 'Unacknowledged', value: 'unack'},
-                    {text: 'Acknowledged', value: 'ack'}
-                  ] track by f.value"
+                  ng-options="f for f in [
+                    'all triggers',
+                    'unacknowledged',
+                    'acknowledged'
+                  ]"
                   ng-change="refreshData()">
           </select>
         </li>
@@ -70,6 +70,24 @@
         </li>
         <li>
           <input class="input-small tight-form-input last" type="number" ng-model="panel.limit" ng-model-onblur ng-change="get_data()">
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+    <div class="tight-form">
+      <ul class="tight-form-list">
+        <li class="tight-form-item" style="width: 100px">
+          <strong>Sort by</strong>
+        </li>
+        <li>
+          <select class="input-medium tight-form-input"
+                  ng-model="panel.sortTriggersBy"
+                  ng-options="f for f in [
+                    'severity',
+                    'last change'
+                  ]"
+                  ng-change="sortTriggers()">
+          </select>
         </li>
       </ul>
       <div class="clearfix"></div>

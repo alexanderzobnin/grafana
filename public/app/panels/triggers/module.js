@@ -35,7 +35,8 @@ function (angular, app, _, config, PanelMeta) {
       ageField: true,
       infoField: true,
       limit: 10,
-      showTriggers: {text: 'All triggers', value: 'all'},
+      showTriggers: 'all triggers',
+      sortTriggersBy: 'last change',
     };
 
     var triggerColors = {
@@ -68,6 +69,18 @@ function (angular, app, _, config, PanelMeta) {
       }
     };
 
+    $scope.sortTriggers = function() {
+      if ($scope.panel.sortTriggersBy === 'last change') {
+        $scope.triggerList = $scope.triggerList.sort(function(a, b) {
+          return b.lastchangeUnix - a.lastchangeUnix;
+        });
+      } else if ($scope.panel.sortTriggersBy === 'severity') {
+        $scope.triggerList = $scope.triggerList.sort(function(a, b) {
+          return b.priority - a.priority;
+        });
+      }
+    };
+
     $scope.refreshData = function() {
 
       $scope.triggerColors = triggerColors;
@@ -83,6 +96,7 @@ function (angular, app, _, config, PanelMeta) {
             var ageUnix = now - lastchange + now.getTimezoneOffset() * 60000;
             var age = zabbixHelperSrv.toZabbixAgeFormat(ageUnix);
             var triggerObj = trigger;
+            triggerObj.lastchangeUnix = lastchangeUnix;
             triggerObj.lastchange = lastchange.toLocaleString();
             triggerObj.age = age.toLocaleString();
             triggerObj.color = triggerColors[trigger.priority];
@@ -103,15 +117,19 @@ function (angular, app, _, config, PanelMeta) {
               });
           });
           return $q.all(promises).then(function (triggerList) {
-            if ($scope.panel.showTriggers.value === 'unack') {
+            if ($scope.panel.showTriggers === 'unacknowledged') {
               $scope.triggerList = _.filter(triggerList, function (trigger) {
                 return !trigger.acknowledges;
               });
-            } else if ($scope.panel.showTriggers.value === 'ack') {
+            } else if ($scope.panel.showTriggers === 'acknowledged') {
               $scope.triggerList = _.filter(triggerList, 'acknowledges');
             } else {
               $scope.triggerList = triggerList;
             }
+
+            // sort triggers
+            $scope.sortTriggers();
+
             $scope.panelRenderingComplete();
           });
         });
