@@ -5,7 +5,7 @@
 		<i ng-repeat="color in colors" class="pointer"
 			ng-class="{'fa fa-circle-o': color === trigger.color,'fa fa-circle': color !== trigger.color}"
 			ng-style="{color:color}"
-			ng-click="changeTriggerSeverityColor(color);dismiss();">&nbsp;</i>
+			ng-click="changeTriggerSeverityColor(trigger, color);dismiss();">&nbsp;</i>
 	</div>
 </div>
 

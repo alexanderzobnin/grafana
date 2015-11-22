@@ -29,6 +29,15 @@ function (angular, app, _, config, PanelMeta) {
 
     $scope.panelMeta.addEditorTab('Options', 'app/panels/triggers/editor.html');
 
+    var triggerSeverity = [
+      { priority: 0, severity: 'Not classified', color: '#DBDBDB' },
+      { priority: 1, severity: 'Information', color: '#D6F6FF' },
+      { priority: 2, severity: 'Warning', color: '#FFF6A5' },
+      { priority: 3, severity: 'Average', color: '#FFB689' },
+      { priority: 4, severity: 'High', color: '#FF9999' },
+      { priority: 5, severity: 'Disaster', color: '#FF3838' }
+    ];
+
     var defaults = {
       severityField: false,
       lastChangeField: true,
@@ -37,35 +46,8 @@ function (angular, app, _, config, PanelMeta) {
       limit: 10,
       showTriggers: 'all triggers',
       sortTriggersBy: 'last change',
+      triggerSeverity: triggerSeverity
     };
-
-    var triggerColors = {
-      0: '#DBDBDB',
-      1: '#D6F6FF',
-      2: '#FFF6A5',
-      //3: 'rgb(137, 15, 2)',
-      3: '#FFB689',
-      4: '#FF9999',
-      5: '#FF3838',
-    };
-
-    var triggerSeverity = {
-      0: 'Not classified',
-      1: 'Information',
-      2: 'Warning',
-      3: 'Average',
-      4: 'High',
-      5: 'Disaster',
-    };
-
-    $scope.triggerSeverity = [
-      { priority: 0, severity: 'Not classified', color: '#DBDBDB' },
-      { priority: 1, severity: 'Information', color: '#D6F6FF' },
-      { priority: 2, severity: 'Warning', color: '#FFF6A5' },
-      { priority: 3, severity: 'Average', color: '#FFB689' },
-      { priority: 4, severity: 'High', color: '#FF9999' },
-      { priority: 5, severity: 'Disaster', color: '#FF3838' }
-    ];
 
     _.defaults($scope.panel, defaults);
     $scope.triggerList = [];
@@ -90,10 +72,14 @@ function (angular, app, _, config, PanelMeta) {
       }
     };
 
+    $scope.refreshTriggerSeverity = function() {
+      _.each($scope.triggerList, function(trigger) {
+        trigger.color = $scope.panel.triggerSeverity[trigger.priority].color;
+        trigger.severity = $scope.panel.triggerSeverity[trigger.priority].severity;
+      });
+    };
+
     $scope.refreshData = function() {
-
-      $scope.triggerColors = triggerColors;
-
       return $scope.datasource.zabbixAPI.getTriggers($scope.panel.limit)
         .then(function(triggers) {
           var promises = _.map(triggers, function (trigger) {
@@ -108,8 +94,8 @@ function (angular, app, _, config, PanelMeta) {
             triggerObj.lastchangeUnix = lastchangeUnix;
             triggerObj.lastchange = lastchange.toLocaleString();
             triggerObj.age = age.toLocaleString();
-            triggerObj.color = triggerColors[trigger.priority];
-            triggerObj.severity = triggerSeverity[trigger.priority];
+            triggerObj.color = $scope.panel.triggerSeverity[trigger.priority].color;
+            triggerObj.severity = $scope.panel.triggerSeverity[trigger.priority].severity;
 
             // Request acknowledges for trigger
             return $scope.datasource.zabbixAPI.getAcknowledges(trigger.triggerid, lastchangeUnix)
@@ -144,21 +130,27 @@ function (angular, app, _, config, PanelMeta) {
         });
     };
 
-    $scope.changeTriggerSeverityColor = function(color) {
-      //severity.color = color;
-      $scope.triggerSeverity[0].color = color;
-      //$scope.render();
+    $scope.changeTriggerSeverityColor = function(trigger, color) {
+      $scope.panel.triggerSeverity[trigger.priority].color = color;
+      $scope.refreshTriggerSeverity();
     };
 
-    $scope.openTriggerColorSelector = function() {
-      var triggerPopoverScope = $scope.$new();
-      triggerPopoverScope.changeTriggerSeverityColor = $scope.changeTriggerSeverityColor;
+    function getTriggerIndexForElement(el) {
+      return el.parents('[data-trigger-index]').data('trigger-index');
+    }
+
+    $scope.openTriggerColorSelector = function(event) {
+      var el = $(event.currentTarget);
+      var index = getTriggerIndexForElement(el);
+      var popoverScope = $scope.$new();
+      popoverScope.trigger = $scope.panel.triggerSeverity[index];
+      popoverScope.changeTriggerSeverityColor = $scope.changeTriggerSeverityColor;
 
       popoverSrv.show({
-        element: $element.find("#trigger-0"),
+        element: el,
         placement: 'top',
         templateUrl:  'app/panels/triggers/trigger.colorpicker.html',
-        scope: triggerPopoverScope
+        scope: popoverScope
       });
     };
 
