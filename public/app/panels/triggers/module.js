@@ -19,7 +19,7 @@ function (angular, app, _, config, PanelMeta) {
     };
   });
 
-  module.controller('TriggersPanelCtrl', function($q, $scope, panelSrv, zabbixHelperSrv) {
+  module.controller('TriggersPanelCtrl', function($q, $scope, $element, panelSrv, zabbixHelperSrv, popoverSrv) {
 
     $scope.panelMeta = new PanelMeta({
       panelName: 'Zabbix triggers',
@@ -57,6 +57,15 @@ function (angular, app, _, config, PanelMeta) {
       4: 'High',
       5: 'Disaster',
     };
+
+    $scope.triggerSeverity = [
+      { priority: 0, severity: 'Not classified', color: '#DBDBDB' },
+      { priority: 1, severity: 'Information', color: '#D6F6FF' },
+      { priority: 2, severity: 'Warning', color: '#FFF6A5' },
+      { priority: 3, severity: 'Average', color: '#FFB689' },
+      { priority: 4, severity: 'High', color: '#FF9999' },
+      { priority: 5, severity: 'Disaster', color: '#FF3838' }
+    ];
 
     _.defaults($scope.panel, defaults);
     $scope.triggerList = [];
@@ -133,6 +142,24 @@ function (angular, app, _, config, PanelMeta) {
             $scope.panelRenderingComplete();
           });
         });
+    };
+
+    $scope.changeTriggerSeverityColor = function(color) {
+      //severity.color = color;
+      $scope.triggerSeverity[0].color = color;
+      //$scope.render();
+    };
+
+    $scope.openTriggerColorSelector = function() {
+      var triggerPopoverScope = $scope.$new();
+      triggerPopoverScope.changeTriggerSeverityColor = $scope.changeTriggerSeverityColor;
+
+      popoverSrv.show({
+        element: $element.find("#trigger-0"),
+        placement: 'top',
+        templateUrl:  'app/panels/triggers/trigger.colorpicker.html',
+        scope: triggerPopoverScope
+      });
     };
 
     $scope.init();

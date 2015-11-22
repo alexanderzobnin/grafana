@@ -121,4 +121,25 @@
       <div class="clearfix"></div>
     </div>
   </div>
+  <div class="section">
+    <h5>Customize trigger severity</h5>
+    <div class="tight-form" ng-repeat="trigger in triggerSeverity">
+      <ul class="tight-form-list">
+        <li class="tight-form-item" style="width: 10px">
+          {{ trigger.priority }}
+        </li>
+        <li class="tight-form-item" style="width: 100px">
+          {{ trigger.severity }}
+        </li>
+        <li class="tight-form-item last" id="trigger-{{trigger.priority}}"
+          ng-style="{color:trigger.color}" style="width: 100px">
+          {{ trigger.color }}
+          <i class="pointer fa fa-circle trigger-color"
+            ng-style="{color:trigger.color}"
+            ng-click="openTriggerColorSelector()">&nbsp;</i>
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+  </div>
 </div>
