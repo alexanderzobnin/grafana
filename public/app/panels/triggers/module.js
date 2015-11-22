@@ -2,11 +2,12 @@ define([
   'angular',
   'app/app',
   'lodash',
+  'jquery',
   'config',
   'app/components/panelmeta',
   'app/plugins/datasource/zabbix/helperFunctions',
 ],
-function (angular, app, _, config, PanelMeta) {
+function (angular, app, _, $, config, PanelMeta) {
   'use strict';
 
   var module = angular.module('grafana.panels.triggers', []);
