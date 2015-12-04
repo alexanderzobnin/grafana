@@ -31,12 +31,12 @@ function (angular, app, _, $, config, PanelMeta) {
     $scope.panelMeta.addEditorTab('Options', 'app/panels/triggers/editor.html');
 
     var triggerSeverity = [
-      { priority: 0, severity: 'Not classified', color: '#DBDBDB' },
-      { priority: 1, severity: 'Information', color: '#D6F6FF' },
-      { priority: 2, severity: 'Warning', color: '#FFF6A5' },
-      { priority: 3, severity: 'Average', color: '#FFB689' },
-      { priority: 4, severity: 'High', color: '#FF9999' },
-      { priority: 5, severity: 'Disaster', color: '#FF3838' }
+      { priority: 0, severity: 'Not classified',  color: '#DBDBDB', show: true },
+      { priority: 1, severity: 'Information',     color: '#D6F6FF', show: true },
+      { priority: 2, severity: 'Warning',         color: '#FFF6A5', show: true },
+      { priority: 3, severity: 'Average',         color: '#FFB689', show: true },
+      { priority: 4, severity: 'High',            color: '#FF9999', show: true },
+      { priority: 5, severity: 'Disaster',        color: '#FF3838', show: true }
     ];
 
     var defaults = {
@@ -123,6 +123,10 @@ function (angular, app, _, $, config, PanelMeta) {
               $scope.triggerList = triggerList;
             }
 
+            // Filter triggers by severity
+            $scope.triggerList = _.filter(triggerList, function (trigger) {
+              return $scope.panel.triggerSeverity[trigger.priority].show;
+            });
             // sort triggers
             $scope.sortTriggers();
 

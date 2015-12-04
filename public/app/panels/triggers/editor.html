@@ -140,10 +140,16 @@
             empty-to-null ng-model="trigger.color"
             ng-change="get_data()" ng-model-onblur>
         </li>
-        <li class="tight-form-item last" data-trigger-index="{{trigger.priority}}"style="width: 12px">
+        <li class="tight-form-item" data-trigger-index="{{trigger.priority}}" style="width: 12px">
           <i class="pointer fa fa-circle trigger-color"
             ng-style="{color:trigger.color}"
             ng-click="openTriggerColorSelector($event)">&nbsp;</i>
+        </li>
+        <li class="tight-form-item last" style="width: 70px">
+          <label class="checkbox-label" for="{{ 'trigger-show-' + $index }}">Show</label>
+            <input class="cr1" ng-attr-id="{{ 'trigger-show-' + $index }}" type="checkbox"
+              ng-model="trigger.show" ng-checked="trigger.show" ng-change="refreshData()">
+            <label for="{{ 'trigger-show-' + $index }}" class="cr1"></label>
         </li>
       </ul>
       <div class="clearfix"></div>
