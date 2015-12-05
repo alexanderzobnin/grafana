@@ -1,10 +1,10 @@
-@zbx:                  #FF0000;
+@zbx:                  #a0a0b0;
 
 .zbx-trigger-table {
   tbody {
     tr:hover > td,
     tr:hover > th {
-      background-color: @zbx;
+      background-color: darken(@zbx, 5%);
     }
   }
 }
@@ -12,7 +12,7 @@
 // Hover states for .zbx-trigger-table
 .zbx-trigger-table tbody tr {
   &.success:hover > td {
-    background-color: darken(@successBackground, 5%);
+    background-color: darken(@zbx, 5%);
   }
   &.error:hover > td {
     background-color: darken(@errorBackground, 5%);

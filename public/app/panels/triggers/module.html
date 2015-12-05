@@ -1,6 +1,6 @@
 <grafana-panel>
   <div style="padding-top: 10px">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered zbx-trigger-table">
       <thead>
         <tr>
           <th>Host</th>
@@ -12,26 +12,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="" ng-repeat="trigger in triggerList">
-          <td style="border-top-width: 1px">
-            <span><strong>{{trigger.host}}</strong></span>
+        <tr class="" ng-repeat="trigger in triggerList"
+          style="background-color: {{trigger.color}}; color: #020202;">
+          <td style="border-top-width: 1px; padding: 2px">
+            <div style="padding: 8px;">
+              <span><strong>{{trigger.host}}</strong></span>
+            </div>
           </td>
           <td ng-if="panel.severityField"
               style="border-top-width: 1px;
                      padding: 2px">
-            <div style="background-color: {{trigger.color}};
-                        color: #020202;
-                        padding: 6px;
-                        border-radius: 2px">
+            <div style="padding: 8px;">
               {{trigger.severity}}
             </div>
           </td>
           <td style="border-top-width: 1px;
                      padding: 2px">
-            <div style="background-color: {{trigger.color}};
-                        color: #020202;
-                        padding: 6px;
-                        border-radius: 2px">
+            <div style="padding: 8px;">
               {{trigger.description}}
               <a ng-if="trigger.comments"
                  class="pointer"
@@ -87,14 +84,14 @@
           <td ng-if="panel.infoField">
             <!-- Trigger Url -->
             <a ng-if="trigger.url" href="{{trigger.url}}" target="_blank">
-              <span style="padding: 4px">
+              <span style="padding: 4px; color: #101010">
                 <i class="fa fa-external-link"></i>
               </span>
             </a>
             <!-- Trigger state -->
             <span ng-if="trigger.state === '1'"
                   bs-tooltip="'{{trigger.error}}'"
-                  style="padding: 4px">
+                  style="padding: 4px; color: #101010">
               <i class="fa fa-question-circle"></i>
             </span>
             <!-- Trigger acknowledges -->
@@ -102,7 +99,7 @@
                   bs-tooltip="'Acknowledges ({{trigger.acknowledges.length}})'"
                   data-toggle="collapse"
                   data-target="#acknowledges-{{trigger.triggerid}}">
-              <span style="padding: 4px">
+              <span style="padding: 4px; color: #101010">
                 <i class="fa fa-comments"></i>
               </span>
             </a>
