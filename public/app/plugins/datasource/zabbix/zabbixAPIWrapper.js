@@ -531,7 +531,7 @@ function (angular, _) {
       return this.performZabbixAPIRequest('service.getsla', params);
     };
 
-    p.getTriggers = function(limit) {
+    p.getTriggers = function(limit, sortfield) {
       var params = {
         output: 'extend',
         expandDescription: true,
@@ -545,6 +545,10 @@ function (angular, _) {
         sortfield: 'lastchange',
         sortorder: 'DESC'
       };
+
+      if (sortfield) {
+        params.sortfield = sortfield;
+      }
 
       return this.performZabbixAPIRequest('trigger.get', params);
     };

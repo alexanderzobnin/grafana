@@ -30,6 +30,11 @@ function (angular, app, _, $, config, PanelMeta) {
 
     $scope.panelMeta.addEditorTab('Options', 'app/panels/triggers/editor.html');
 
+    $scope.sortByFields = [
+      { text: 'last change',  value: 'lastchange' },
+      { text: 'severity',     value: 'priority' }
+    ];
+
     var triggerSeverity = [
       { priority: 0, severity: 'Not classified',  color: '#DBDBDB', show: true },
       { priority: 1, severity: 'Information',     color: '#D6F6FF', show: true },
@@ -39,18 +44,18 @@ function (angular, app, _, $, config, PanelMeta) {
       { priority: 5, severity: 'Disaster',        color: '#FF3838', show: true }
     ];
 
-    var defaults = {
+    var panelDefaults = {
       severityField: false,
       lastChangeField: true,
       ageField: true,
       infoField: true,
       limit: 10,
       showTriggers: 'all triggers',
-      sortTriggersBy: 'last change',
+      sortTriggersBy: { text: 'last change', value: 'lastchange' },
       triggerSeverity: triggerSeverity
     };
 
-    _.defaults($scope.panel, defaults);
+    _.defaults($scope.panel, panelDefaults);
     $scope.triggerList = [];
 
     $scope.init = function() {
@@ -62,11 +67,12 @@ function (angular, app, _, $, config, PanelMeta) {
     };
 
     $scope.sortTriggers = function() {
-      if ($scope.panel.sortTriggersBy === 'last change') {
+      console.log($scope.panel.sortTriggersBy);
+      if ($scope.panel.sortTriggersBy.value === 'lastchange') {
         $scope.triggerList = $scope.triggerList.sort(function(a, b) {
           return b.lastchangeUnix - a.lastchangeUnix;
         });
-      } else if ($scope.panel.sortTriggersBy === 'severity') {
+      } else if ($scope.panel.sortTriggersBy.value === 'priority') {
         $scope.triggerList = $scope.triggerList.sort(function(a, b) {
           return b.priority - a.priority;
         });
@@ -81,7 +87,7 @@ function (angular, app, _, $, config, PanelMeta) {
     };
 
     $scope.refreshData = function() {
-      return $scope.datasource.zabbixAPI.getTriggers($scope.panel.limit)
+      return $scope.datasource.zabbixAPI.getTriggers($scope.panel.limit, $scope.panel.sortTriggersBy.value)
         .then(function(triggers) {
           var promises = _.map(triggers, function (trigger) {
             var lastchange = new Date(trigger.lastchange * 1000);
@@ -128,7 +134,7 @@ function (angular, app, _, $, config, PanelMeta) {
               return $scope.panel.triggerSeverity[trigger.priority].show;
             });
             // sort triggers
-            $scope.sortTriggers();
+            //$scope.sortTriggers();
 
             $scope.panelRenderingComplete();
           });
