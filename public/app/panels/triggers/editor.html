@@ -122,9 +122,10 @@
   </div>
   <div class="section">
     <h5>Customize triggers severity and colors</h5>
-    <div class="tight-form" ng-repeat="trigger in panel.triggerSeverity">
+    <div class="tight-form" ng-repeat="trigger in panel.triggerSeverity"
+      ng-class="{last: $last}" ng-style="{background:trigger.color}">
       <ul class="tight-form-list">
-        <li class="tight-form-item" style="width: 10px">
+        <li class="tight-form-item" style="width: 10px; color: #101010">
           {{ trigger.priority }}
         </li>
         <li>
@@ -132,18 +133,16 @@
             empty-to-null ng-model="trigger.severity" ng-style="{background:trigger.color}"
             ng-change="get_data()" ng-model-onblur>
         </li>
-        <li>
-          <input type="text" class="tight-form-input input-small"
-            empty-to-null ng-model="trigger.color"
+        <li data-trigger-index="{{trigger.priority}}">
+          &nbsp;
+          <i class="pointer fa fa-eyedropper trigger-color" style="color: #101010"
+            ng-click="openTriggerColorSelector($event)">&nbsp;</i>
+          <input type="text" class="tight-form-input input-small" style="color: #101010"
+            empty-to-null ng-model="trigger.color"  ng-style="{background:trigger.color}"
             ng-change="get_data()" ng-model-onblur>
         </li>
-        <li class="tight-form-item" data-trigger-index="{{trigger.priority}}" style="width: 12px">
-          <i class="pointer fa fa-circle trigger-color"
-            ng-style="{color:trigger.color}"
-            ng-click="openTriggerColorSelector($event)">&nbsp;</i>
-        </li>
-        <li class="tight-form-item last" style="width: 70px">
-          <label class="checkbox-label" for="{{ 'trigger-show-' + $index }}">Show</label>
+        <li class="tight-form-item last" style="width: 28px">
+          <label class="checkbox-label" for="{{ 'trigger-show-' + $index }}"></label>
             <input class="cr1" ng-attr-id="{{ 'trigger-show-' + $index }}" type="checkbox"
               ng-model="trigger.show" ng-checked="trigger.show" ng-change="refreshData()">
             <label for="{{ 'trigger-show-' + $index }}" class="cr1"></label>
