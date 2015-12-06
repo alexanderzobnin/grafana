@@ -531,7 +531,7 @@ function (angular, _) {
       return this.performZabbixAPIRequest('service.getsla', params);
     };
 
-    p.getTriggers = function(limit, sortfield) {
+    p.getTriggers = function(limit, sortfield, groupids, hostids, applicationids, name) {
       var params = {
         output: 'extend',
         expandDescription: true,
@@ -541,6 +541,13 @@ function (angular, _) {
         filter: {
           value: 1
         },
+        search : {
+          description: name
+        },
+        searchWildcardsEnabled: false,
+        groupids: groupids,
+        hostids: hostids,
+        applicationids: applicationids,
         limit: limit,
         sortfield: 'lastchange',
         sortorder: 'DESC'

@@ -8,16 +8,16 @@
         </li>
         <li>
           <input type="text" class="input-large tight-form-input"
-            empty-to-null ng-model="trigger.group" valid-time-span
-            ng-change="get_data()" ng-model-onblur>
+            empty-to-null ng-model="panel.triggers.group"
+            ng-blur="refreshData()">
         </li>
         <li class="tight-form-item" style="width: 50px">
           Host
         </li>
         <li>
           <input type="text" class="input-large tight-form-input last"
-            empty-to-null ng-model="trigger.host" valid-time-span
-            ng-change="get_data()" ng-model-onblur>
+            empty-to-null ng-model="panel.triggers.host"
+            ng-blur="refreshData()">
         </li>
       </ul>
       <div class="clearfix"></div>
@@ -29,16 +29,16 @@
         </li>
         <li>
           <input type="text" class="input-large tight-form-input"
-            empty-to-null ng-model="trigger.application" valid-time-span
-            ng-change="get_data()" ng-model-onblur>
+            empty-to-null ng-model="panel.triggers.application"
+            ng-blur="refreshData()">
         </li>
         <li class="tight-form-item" style="width: 50px">
           Trigger
         </li>
         <li>
           <input type="text" class="input-large tight-form-input last" placeholder="trigger name"
-            empty-to-null ng-model="trigger.name" valid-time-span
-            ng-change="get_data()" ng-model-onblur>
+            empty-to-null ng-model="panel.triggers.name"
+            ng-blur="refreshData()">
         </li>
       </ul>
       <div class="clearfix"></div>
