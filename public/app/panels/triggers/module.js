@@ -40,13 +40,22 @@ function (angular, app, _, $, config, PanelMeta) {
       { text: 'severity',     value: 'priority' }
     ];
 
-    var triggerSeverity = [
+    var zabbixDefaultSeverity = [
       { priority: 0, severity: 'Not classified',  color: '#DBDBDB', show: true },
       { priority: 1, severity: 'Information',     color: '#D6F6FF', show: true },
       { priority: 2, severity: 'Warning',         color: '#FFF6A5', show: true },
       { priority: 3, severity: 'Average',         color: '#FFB689', show: true },
       { priority: 4, severity: 'High',            color: '#FF9999', show: true },
       { priority: 5, severity: 'Disaster',        color: '#FF3838', show: true }
+    ];
+
+    var grafanaDefaultSeverity = [
+      { priority: 0, severity: 'Not classified',  color: '#B7DBAB', show: true },
+      { priority: 1, severity: 'Information',     color: '#82B5D8', show: true },
+      { priority: 2, severity: 'Warning',         color: '#E5AC0E', show: true },
+      { priority: 3, severity: 'Average',         color: '#C15C17', show: true },
+      { priority: 4, severity: 'High',            color: '#BF1B00', show: true },
+      { priority: 5, severity: 'Disaster',        color: '#890F02', show: true }
     ];
 
     var panelDefaults = {
@@ -63,7 +72,7 @@ function (angular, app, _, $, config, PanelMeta) {
       limit: 10,
       showTriggers: 'all triggers',
       sortTriggersBy: { text: 'last change', value: 'lastchange' },
-      triggerSeverity: triggerSeverity
+      triggerSeverity: grafanaDefaultSeverity
     };
 
     _.defaults($scope.panel, panelDefaults);
