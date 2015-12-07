@@ -72,7 +72,7 @@ function (angular, app, _, $, config, PanelMeta) {
       limit: 10,
       showTriggers: 'all triggers',
       sortTriggersBy: { text: 'last change', value: 'lastchange' },
-      triggerSeverity: grafanaDefaultSeverity
+      triggerSeverity: grafanaDefaultSeverity || zabbixDefaultSeverity
     };
 
     _.defaults($scope.panel, panelDefaults);
@@ -97,6 +97,11 @@ function (angular, app, _, $, config, PanelMeta) {
         return datasource.meta.type === 'zabbix';
       });
       $scope.datasources = _.map(datasources, 'name');
+
+      // Set default datasource
+      if (!$scope.panel.datasource) {
+        $scope.panel.datasource = $scope.datasources[0];
+      }
 
       // Update lists of groups, hosts and applications
       $scope.updateGroups()
