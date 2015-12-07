@@ -1,6 +1,6 @@
 <div class="editor-row">
-  <h5>Select triggers</h5>
   <div class="section tight-form-container" style="margin-bottom: 20px">
+    <h5>Select triggers</h5>
     <div class="tight-form">
       <ul class="tight-form-list">
         <li class="tight-form-item" style="width: 80px">
@@ -42,6 +42,22 @@
         </li>
       </ul>
       <div class="clearfix"></div>
+    </div>
+  </div>
+  <div class="section">
+    <h5>Data source</h5>
+    <div class="section tight-form-container" style="margin-bottom: 20px">
+      <div class="tight-form">
+        <ul class="tight-form-list">
+          <li>
+            <select class="tight-form-input input-large last"
+                    ng-model="panel.datasource"
+                    ng-options="ds for ds in datasources"
+                    ng-change="datasourceChanged()">
+            </select>
+          </li>
+        </ul>
+        <div class="clearfix"></div>
     </div>
   </div>
 </div>
