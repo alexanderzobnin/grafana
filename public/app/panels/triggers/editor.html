@@ -7,17 +7,21 @@
           Group
         </li>
         <li>
-          <input type="text" class="input-large tight-form-input"
-            empty-to-null ng-model="panel.triggers.group"
-            ng-blur="refreshData()">
+          <select class="tight-form-input input-large"
+                  ng-model="panel.triggers.group"
+                  ng-options="g.name for g in metric.groupList track by g.name"
+                  ng-change="groupChanged()">
+          </select>
         </li>
         <li class="tight-form-item" style="width: 50px">
           Host
         </li>
         <li>
-          <input type="text" class="input-large tight-form-input last"
-            empty-to-null ng-model="panel.triggers.host"
-            ng-blur="refreshData()">
+          <select class="tight-form-input input-large last"
+                  ng-model="panel.triggers.host"
+                  ng-options="h.name for h in metric.hostList track by h.name"
+                  ng-change="hostChanged()">
+          </select>
         </li>
       </ul>
       <div class="clearfix"></div>
@@ -28,9 +32,11 @@
           Application
         </li>
         <li>
-          <input type="text" class="input-large tight-form-input"
-            empty-to-null ng-model="panel.triggers.application"
-            ng-blur="refreshData()">
+          <select class="tight-form-input input-large"
+                  ng-model="panel.triggers.application"
+                  ng-options="app.name for app in metric.applicationList track by app.name"
+                  ng-change="appChanged()">
+          </select>
         </li>
         <li class="tight-form-item" style="width: 50px">
           Trigger

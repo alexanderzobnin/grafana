@@ -51,7 +51,11 @@ function (angular, app, _, $, config, PanelMeta) {
 
     var panelDefaults = {
       datasource: null,
-      triggers: {},
+      triggers: {
+        group: {name: 'All', groupid: null},
+        host: {name: 'All', hostid: null},
+        application: {name: 'All', value: null}
+      },
       severityField: false,
       lastChangeField: true,
       ageField: true,
@@ -71,11 +75,57 @@ function (angular, app, _, $, config, PanelMeta) {
         $scope.panel.title = "Zabbix Triggers";
       }
 
+      if (!$scope.metric) {
+        $scope.metric = {
+          groupList: [{name: 'All', groupid: null}],
+          hostList: [{name: 'All', hostid: null}],
+          applicationList: [{name: 'All', applicationid: null}]
+        };
+      }
+
       // Get zabbix data sources
       var datasources = _.filter(datasourceSrv.getMetricSources(), function(datasource) {
         return datasource.meta.type === 'zabbix';
       });
       $scope.datasources = _.map(datasources, 'name');
+
+      // Update lists of groups, hosts and applications
+      $scope.updateGroups()
+        .then($scope.updateHosts)
+        .then($scope.updateApplications);
+    };
+
+    $scope.updateGroups = function() {
+      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
+        return $scope.updateGroupList(datasource);
+      });
+    };
+
+    $scope.updateHosts = function() {
+      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
+        return $scope.updateHostList(datasource);
+      });
+    };
+
+    $scope.updateApplications = function() {
+      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
+        return $scope.updateAppList(datasource);
+      });
+    };
+
+    $scope.groupChanged = function() {
+      return $scope.updateHosts()
+        .then($scope.updateApplications)
+        .then($scope.refreshData);
+    };
+
+    $scope.hostChanged = function() {
+      return $scope.updateApplications()
+        .then($scope.refreshData);
+    };
+
+    $scope.appChanged = function() {
+      return $scope.updateHosts();
     };
 
     $scope.sortTriggers = function() {
@@ -103,12 +153,16 @@ function (angular, app, _, $, config, PanelMeta) {
       return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
         var zabbix = datasource.zabbixAPI;
 
+        var groupid = $scope.panel.triggers.group.groupid;
+        var hostid = $scope.panel.triggers.host.hostid;
+        var applicationid = $scope.panel.triggers.application.applicationid;
+
         // Get triggers
         return zabbix.getTriggers($scope.panel.limit,
                                   $scope.panel.sortTriggersBy.value,
-                                  $scope.panel.triggers.group,
-                                  $scope.panel.triggers.host,
-                                  $scope.panel.triggers.application,
+                                  groupid,
+                                  hostid,
+                                  applicationid,
                                   $scope.panel.triggers.name)
           .then(function(triggers) {
             var promises = _.map(triggers, function (trigger) {
@@ -195,59 +249,38 @@ function (angular, app, _, $, config, PanelMeta) {
     /**
      * Update list of host groups
      */
-    $scope.updateGroupList = function () {
-      zabbix.performHostGroupSuggestQuery().then(function (groups) {
-        $scope.metric.groupList = [{name: '*', visible_name: 'All'}];
-        addTemplatedVariables($scope.metric.groupList);
+    $scope.updateGroupList = function (datasource) {
+      datasource.zabbixAPI.performHostGroupSuggestQuery().then(function (groups) {
         $scope.metric.groupList = $scope.metric.groupList.concat(groups);
       });
     };
 
-    /**
-     * Update list of hosts
-     */
-    $scope.updateHostList = function () {
-      var groups = $scope.target.group ? zabbixHelperSrv.splitMetrics(templateSrv.replace($scope.target.group.name)) : undefined;
+    $scope.updateHostList = function (datasource) {
+      var groups = $scope.panel.triggers.group.groupid ? $scope.panel.triggers.group.name : '*';
       if (groups) {
-        zabbix.hostFindQuery(groups).then(function (hosts) {
-          $scope.metric.hostList = [{name: '*', visible_name: 'All'}];
-          addTemplatedVariables($scope.metric.hostList);
+        datasource.zabbixAPI.hostFindQuery(groups).then(function (hosts) {
+          $scope.metric.hostList = [{name: 'All', hostid: null}];
           $scope.metric.hostList = $scope.metric.hostList.concat(hosts);
         });
       }
     };
 
-    /**
-     * Update list of host applications
-     */
-    $scope.updateAppList = function () {
-      var groups = $scope.target.group ? zabbixHelperSrv.splitMetrics(templateSrv.replace($scope.target.group.name)) : undefined;
-      var hosts = $scope.target.host ? zabbixHelperSrv.splitMetrics(templateSrv.replace($scope.target.host.name)) : undefined;
+    $scope.updateAppList = function (datasource) {
+      var groups = $scope.panel.triggers.group.groupid ? $scope.panel.triggers.group.name : '*';
+      var hosts = $scope.panel.triggers.host.hostid ? $scope.panel.triggers.host.name : '*';
       if (groups && hosts) {
-        zabbix.appFindQuery(hosts, groups).then(function (apps) {
+        datasource.zabbixAPI.appFindQuery(hosts, groups).then(function (apps) {
           apps = _.map(_.uniq(_.map(apps, 'name')), function (appname) {
-            return {name: appname};
+            return {
+              name: appname,
+              value: appname
+            };
           });
-          $scope.metric.applicationList = [{name: '*', visible_name: 'All'}];
-          addTemplatedVariables($scope.metric.applicationList);
+          $scope.metric.applicationList = [{name: 'All', value: null}];
           $scope.metric.applicationList = $scope.metric.applicationList.concat(apps);
         });
       }
     };
-
-    /**
-     * Add templated variables to list of available metrics
-     *
-     * @param {Array} metricList List of metrics which variables add to
-     */
-    function addTemplatedVariables(metricList) {
-      _.each(templateSrv.variables, function (variable) {
-        metricList.push({
-          name: '$' + variable.name,
-          templated: true
-        });
-      });
-    }
 
     $scope.init();
   });
