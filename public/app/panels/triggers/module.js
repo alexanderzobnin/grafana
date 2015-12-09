@@ -1,3 +1,16 @@
+/**
+ * Grafana-Zabbix
+ * Zabbix plugin for Grafana.
+ * http://github.com/alexanderzobnin/grafana-zabbix
+ *
+ * Trigger panel.
+ * This feature sponsored by CORE IT
+ * http://www.coreit.fr
+ *
+ * Copyright 2015 Alexander Zobnin alexanderzobnin@gmail.com
+ * Licensed under the Apache License, Version 2.0
+ */
+
 define([
   'angular',
   'app/app',
