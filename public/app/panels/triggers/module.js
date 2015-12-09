@@ -35,18 +35,15 @@ function (angular, app, _, $, config, PanelMeta) {
 
     $scope.panelMeta.addEditorTab('Options', 'app/panels/triggers/editor.html');
 
+    $scope.ackFilters = [
+      'all triggers',
+      'unacknowledged',
+      'acknowledged'
+    ];
+
     $scope.sortByFields = [
       { text: 'last change',  value: 'lastchange' },
       { text: 'severity',     value: 'priority' }
-    ];
-
-    var zabbixDefaultSeverity = [
-      { priority: 0, severity: 'Not classified',  color: '#DBDBDB', show: true },
-      { priority: 1, severity: 'Information',     color: '#D6F6FF', show: true },
-      { priority: 2, severity: 'Warning',         color: '#FFF6A5', show: true },
-      { priority: 3, severity: 'Average',         color: '#FFB689', show: true },
-      { priority: 4, severity: 'High',            color: '#FF9999', show: true },
-      { priority: 5, severity: 'Disaster',        color: '#FF3838', show: true }
     ];
 
     var grafanaDefaultSeverity = [
@@ -72,7 +69,7 @@ function (angular, app, _, $, config, PanelMeta) {
       limit: 10,
       showTriggers: 'all triggers',
       sortTriggersBy: { text: 'last change', value: 'lastchange' },
-      triggerSeverity: grafanaDefaultSeverity || zabbixDefaultSeverity
+      triggerSeverity: grafanaDefaultSeverity
     };
 
     _.defaults($scope.panel, panelDefaults);
@@ -107,46 +104,6 @@ function (angular, app, _, $, config, PanelMeta) {
       $scope.updateGroups()
         .then($scope.updateHosts)
         .then($scope.updateApplications);
-    };
-
-    $scope.updateGroups = function() {
-      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
-        return $scope.updateGroupList(datasource);
-      });
-    };
-
-    $scope.updateHosts = function() {
-      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
-        return $scope.updateHostList(datasource);
-      });
-    };
-
-    $scope.updateApplications = function() {
-      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
-        return $scope.updateAppList(datasource);
-      });
-    };
-
-    $scope.groupChanged = function() {
-      return $scope.updateHosts()
-        .then($scope.updateApplications)
-        .then($scope.refreshData);
-    };
-
-    $scope.hostChanged = function() {
-      return $scope.updateApplications()
-        .then($scope.refreshData);
-    };
-
-    $scope.appChanged = function() {
-      return $scope.updateHosts();
-    };
-
-    $scope.refreshTriggerSeverity = function() {
-      _.each($scope.triggerList, function(trigger) {
-        trigger.color = $scope.panel.triggerSeverity[trigger.priority].color;
-        trigger.severity = $scope.panel.triggerSeverity[trigger.priority].severity;
-      });
     };
 
     $scope.refreshData = function() {
@@ -220,6 +177,47 @@ function (angular, app, _, $, config, PanelMeta) {
       });
     };
 
+    $scope.groupChanged = function() {
+      return $scope.updateHosts()
+        .then($scope.updateApplications)
+        .then($scope.refreshData);
+    };
+
+    $scope.hostChanged = function() {
+      return $scope.updateApplications()
+        .then($scope.refreshData);
+    };
+
+    // TODO: implement filter by application
+    $scope.appChanged = function() {
+      return $scope.updateHosts();
+    };
+
+    $scope.updateGroups = function() {
+      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
+        return $scope.updateGroupList(datasource);
+      });
+    };
+
+    $scope.updateHosts = function() {
+      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
+        return $scope.updateHostList(datasource);
+      });
+    };
+
+    $scope.updateApplications = function() {
+      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
+        return $scope.updateAppList(datasource);
+      });
+    };
+
+    $scope.refreshTriggerSeverity = function() {
+      _.each($scope.triggerList, function(trigger) {
+        trigger.color = $scope.panel.triggerSeverity[trigger.priority].color;
+        trigger.severity = $scope.panel.triggerSeverity[trigger.priority].severity;
+      });
+    };
+
     $scope.datasourceChanged = function() {
       $scope.refreshData();
     };
@@ -248,9 +246,6 @@ function (angular, app, _, $, config, PanelMeta) {
       });
     };
 
-    /**
-     * Update list of host groups
-     */
     $scope.updateGroupList = function (datasource) {
       datasource.zabbixAPI.performHostGroupSuggestQuery().then(function (groups) {
         $scope.metric.groupList = $scope.metric.groupList.concat(groups);
