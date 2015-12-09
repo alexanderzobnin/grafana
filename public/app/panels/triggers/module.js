@@ -209,6 +209,8 @@ function (angular, app, _, $, config, PanelMeta) {
                 });
             });
             return $q.all(promises).then(function (triggerList) {
+
+              // Filter acknowledged triggers
               if ($scope.panel.showTriggers === 'unacknowledged') {
                 $scope.triggerList = _.filter(triggerList, function (trigger) {
                   return !trigger.acknowledges;
@@ -220,9 +222,10 @@ function (angular, app, _, $, config, PanelMeta) {
               }
 
               // Filter triggers by severity
-              $scope.triggerList = _.filter(triggerList, function (trigger) {
+              $scope.triggerList = _.filter($scope.triggerList, function (trigger) {
                 return $scope.panel.triggerSeverity[trigger.priority].show;
               });
+
               // sort triggers
               //$scope.sortTriggers();
 
