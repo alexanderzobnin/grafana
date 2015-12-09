@@ -12,42 +12,46 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="" ng-repeat="trigger in triggerList"
-          style="background-color: {{trigger.color}}; color: #020202;">
-          <td style="border-top-width: 1px; padding: 2px">
-            <div style="padding: 8px;">
+        <tr class=""
+            ng-repeat="trigger in triggerList"
+            style="background-color: {{trigger.color}}; color: #020202;">
+          <td>
+            <div>
               <span><strong>{{trigger.host}}</strong></span>
             </div>
           </td>
-          <td ng-if="panel.severityField"
-              style="border-top-width: 1px;
-                     padding: 2px">
-            <div style="padding: 8px;">
+          <td ng-if="panel.severityField">
+            <div>
               {{trigger.severity}}
             </div>
           </td>
-          <td style="border-top-width: 1px;
-                     padding: 2px">
-            <div style="padding: 8px;">
+          <td>
+            <div>
               {{trigger.description}}
-              <a ng-if="trigger.comments"
-                 class="pointer"
-                 style="float: right; color: #101010"
-                 data-toggle="collapse"
-                 data-target="#comments-{{trigger.triggerid}}"
-                 bs-tooltip="'Show additional trigger description'"
-                 data-placement="top">
+              <a  ng-if="trigger.comments"
+                  class="pointer"
+                  style="float: right; color: #101010"
+                  data-toggle="collapse"
+                  data-target="#comments-{{trigger.triggerid}}"
+                  bs-tooltip="'Show additional trigger description'"
+                  data-placement="top">
                 <i class="fa fa-file-text-o"></i>
               </a>
             </div>
+
             <!-- Trigger comments -->
-            <div ng-if="trigger.comments" id="comments-{{trigger.triggerid}}" class="collapse">
-              <div style="padding: 8px">
+            <div  class="collapse"
+                  id="comments-{{trigger.triggerid}}"
+                  ng-if="trigger.comments">
+              <div>
                 <small>{{trigger.comments}}</small>
               </div>
             </div>
+
             <!-- Trigger acknowledges -->
-            <div ng-if="trigger.acknowledges" id="acknowledges-{{trigger.triggerid}}" class="collapse">
+            <div  class="collapse"
+                  id="acknowledges-{{trigger.triggerid}}"
+                  ng-if="trigger.acknowledges">
               <div style="padding-top: 12px;">
                 <table class="table table-condensed table-striped table-bordered"
                        style="background-color: initial">
@@ -82,23 +86,26 @@
             {{trigger.age}}
           </td>
           <td ng-if="panel.infoField">
+
             <!-- Trigger Url -->
             <a ng-if="trigger.url" href="{{trigger.url}}" target="_blank">
               <span style="padding: 4px; color: #101010">
                 <i class="fa fa-external-link"></i>
               </span>
             </a>
+
             <!-- Trigger state -->
             <span ng-if="trigger.state === '1'"
                   bs-tooltip="'{{trigger.error}}'"
                   style="padding: 4px; color: #101010">
               <i class="fa fa-question-circle"></i>
             </span>
+
             <!-- Trigger acknowledges -->
-            <a ng-if="trigger.acknowledges"
-                  bs-tooltip="'Acknowledges ({{trigger.acknowledges.length}})'"
-                  data-toggle="collapse"
-                  data-target="#acknowledges-{{trigger.triggerid}}">
+            <a  ng-if="trigger.acknowledges"
+                bs-tooltip="'Acknowledges ({{trigger.acknowledges.length}})'"
+                data-toggle="collapse"
+                data-target="#acknowledges-{{trigger.triggerid}}">
               <span style="padding: 4px; color: #101010">
                 <i class="fa fa-comments"></i>
               </span>
