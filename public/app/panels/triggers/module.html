@@ -14,7 +14,7 @@
       <tbody>
         <tr class=""
             ng-repeat="trigger in triggerList"
-            style="background-color: {{trigger.color}}; color: #020202;">
+            style="background-color: {{trigger.color}}">
           <td>
             <div>
               <span><strong>{{trigger.host}}</strong></span>
@@ -30,7 +30,7 @@
               {{trigger.description}}
               <a  ng-if="trigger.comments"
                   class="pointer"
-                  style="float: right; color: #101010"
+                  style="float: right;"
                   data-toggle="collapse"
                   data-target="#comments-{{trigger.triggerid}}"
                   bs-tooltip="'Show additional trigger description'"
@@ -88,27 +88,27 @@
           <td ng-if="panel.infoField">
 
             <!-- Trigger Url -->
-            <a ng-if="trigger.url" href="{{trigger.url}}" target="_blank">
-              <span style="padding: 4px; color: #101010">
-                <i class="fa fa-external-link"></i>
-              </span>
+            <a  class="zbx-trigger-info"
+                ng-if="trigger.url"
+                href="{{trigger.url}}"
+                target="_blank">
+              <i class="fa fa-external-link"></i>
             </a>
 
             <!-- Trigger state -->
-            <span ng-if="trigger.state === '1'"
-                  bs-tooltip="'{{trigger.error}}'"
-                  style="padding: 4px; color: #101010">
+            <span class="zbx-trigger-info"
+                  ng-if="trigger.state === '1'"
+                  bs-tooltip="'{{trigger.error}}'">
               <i class="fa fa-question-circle"></i>
             </span>
 
             <!-- Trigger acknowledges -->
-            <a  ng-if="trigger.acknowledges"
+            <a  class="zbx-trigger-info"
+                ng-if="trigger.acknowledges"
                 bs-tooltip="'Acknowledges ({{trigger.acknowledges.length}})'"
                 data-toggle="collapse"
                 data-target="#acknowledges-{{trigger.triggerid}}">
-              <span style="padding: 4px; color: #101010">
-                <i class="fa fa-comments"></i>
-              </span>
+              <i class="fa fa-comments"></i>
             </a>
           </td>
         </tr>

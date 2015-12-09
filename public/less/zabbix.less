@@ -1,4 +1,5 @@
-@zbx:                  #a0a0b0;
+@zbx:                   #a0a0b0;
+@zbxTriggerPanelFG:     #020202;
 
 .zbx-trigger-table {
   tbody {
@@ -7,10 +8,21 @@
       background-color: darken(@zbx, 5%);
     }
     td {
-      border-top-width: 1px;
-      padding: 8px
+      color: @zbxTriggerPanelFG;
+      border-width: 2px;
+      padding: 8px;
+      a {
+        color: @zbxTriggerPanelFG;
+      }
+      a > span {
+        color: @zbxTriggerPanelFG;
+      }
     }
   }
+}
+
+.zbx-trigger-info {
+  padding-right: 8px;
 }
 
 // Hover states for .zbx-trigger-table
