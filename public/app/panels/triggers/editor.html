@@ -87,7 +87,7 @@
                     ng-change="get_data()">
             </select>
           </li>
-          <li class="tight-form-item" style="width: 12em">
+          <li class="tight-form-item" style="width: 13em">
             <strong>Limit triggers number to</strong>
           </li>
           <li>
@@ -119,6 +119,15 @@
         <ul class="tight-form-list">
           <li class="tight-form-item" style="width: 100px">
             <strong>Show fields</strong>
+          </li>
+          <li class="tight-form-item">
+            <label class="checkbox-label" for="panel.hostField">Host</label>
+            <input  class="cr1"
+                    id="panel.hostField"
+                    type="checkbox"
+                    ng-model="panel.hostField"
+                    ng-checked="panel.hostField">
+            <label for="panel.hostField" class="cr1"></label>
           </li>
           <li class="tight-form-item">
             <label class="checkbox-label" for="panel.severityField">Severity</label>

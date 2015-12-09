@@ -75,6 +75,7 @@ function (angular, app, _, $, config, PanelMeta) {
         host: {name: 'All', hostid: null},
         application: {name: 'All', value: null}
       },
+      hostField: true,
       severityField: false,
       lastChangeField: true,
       ageField: true,

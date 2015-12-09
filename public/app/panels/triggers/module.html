@@ -3,7 +3,7 @@
     <table class="table table-bordered zbx-trigger-table">
       <thead>
         <tr>
-          <th>Host</th>
+          <th ng-if="panel.hostField">Host</th>
           <th ng-if="panel.severityField">Severity</th>
           <th style="width: 50%">Issue</th>
           <th ng-if="panel.lastChangeField">Last change</th>
@@ -15,7 +15,7 @@
         <tr class=""
             ng-repeat="trigger in triggerList"
             style="background-color: {{trigger.color}}">
-          <td>
+          <td ng-if="panel.hostField">
             <div>
               <span><strong>{{trigger.host}}</strong></span>
             </div>
