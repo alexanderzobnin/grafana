@@ -142,18 +142,6 @@ function (angular, app, _, $, config, PanelMeta) {
       return $scope.updateHosts();
     };
 
-    $scope.sortTriggers = function() {
-      if ($scope.panel.sortTriggersBy.value === 'lastchange') {
-        $scope.triggerList = $scope.triggerList.sort(function(a, b) {
-          return b.lastchangeUnix - a.lastchangeUnix;
-        });
-      } else if ($scope.panel.sortTriggersBy.value === 'priority') {
-        $scope.triggerList = $scope.triggerList.sort(function(a, b) {
-          return b.priority - a.priority;
-        });
-      }
-    };
-
     $scope.refreshTriggerSeverity = function() {
       _.each($scope.triggerList, function(trigger) {
         trigger.color = $scope.panel.triggerSeverity[trigger.priority].color;
@@ -225,9 +213,6 @@ function (angular, app, _, $, config, PanelMeta) {
               $scope.triggerList = _.filter($scope.triggerList, function (trigger) {
                 return $scope.panel.triggerSeverity[trigger.priority].show;
               });
-
-              // sort triggers
-              //$scope.sortTriggers();
 
               $scope.panelRenderingComplete();
             });
