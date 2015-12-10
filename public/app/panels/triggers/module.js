@@ -128,14 +128,14 @@ function (angular, app, _, $, config, PanelMeta) {
 
         var groupid = $scope.panel.triggers.group.groupid;
         var hostid = $scope.panel.triggers.host.hostid;
-        var applicationid = $scope.panel.triggers.application.applicationid;
+        var applicationids = $scope.panel.triggers.application.value;
 
         // Get triggers
         return zabbix.getTriggers($scope.panel.limit,
                                   $scope.panel.sortTriggersBy.value,
                                   groupid,
                                   hostid,
-                                  applicationid,
+                                  applicationids,
                                   $scope.panel.triggers.name)
           .then(function(triggers) {
             var promises = _.map(triggers, function (trigger) {
@@ -202,9 +202,15 @@ function (angular, app, _, $, config, PanelMeta) {
         .then($scope.refreshData);
     };
 
-    // TODO: implement filter by application
     $scope.appChanged = function() {
-      return $scope.updateHosts();
+      var app = $scope.panel.triggers.application.name;
+
+      return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
+        return datasource.zabbixAPI.getAppByName(app).then(function (applications) {
+          var appids = _.map(applications, 'applicationid')
+          $scope.panel.triggers.application.value = appids.length ? appids : null;
+        });
+      }).then($scope.refreshData);
     };
 
     $scope.updateGroups = function() {
