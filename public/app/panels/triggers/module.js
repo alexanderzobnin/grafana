@@ -207,7 +207,7 @@ function (angular, app, _, $, config, PanelMeta) {
 
       return datasourceSrv.get($scope.panel.datasource).then(function (datasource) {
         return datasource.zabbixAPI.getAppByName(app).then(function (applications) {
-          var appids = _.map(applications, 'applicationid')
+          var appids = _.map(applications, 'applicationid');
           $scope.panel.triggers.application.value = appids.length ? appids : null;
         });
       }).then($scope.refreshData);
