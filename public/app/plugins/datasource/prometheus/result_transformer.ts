@@ -47,12 +47,12 @@ export class ResponseTransformer {
 
     */
 
-    for (let serie of result) {
-      var decrementer = 0;
+    // for (let serie of result) {
+    //   var decrementer = 0;
 
-      for (let bucket of serie.values) {
-      }
-    }
+    //   for (let bucket of serie.values) {
+    //   }
+    // }
 
     //decount
 

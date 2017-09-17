@@ -1,7 +1,7 @@
-import { describe, beforeEach, it, sinon, expect, angularMocks } from 'test/lib/common';
-import moment from 'moment';
-import helpers from 'test/specs/helpers';
-import { PrometheusDatasource } from '../datasource';
+import { describe, beforeEach, it, expect } from 'test/lib/common';
+// import moment from 'moment';
+// import helpers from 'test/specs/helpers';
+// import { PrometheusDatasource } from '../datasource';
 import { ResponseTransformer } from '../result_transformer';
 
 describe('ResultTransformer', function() {
