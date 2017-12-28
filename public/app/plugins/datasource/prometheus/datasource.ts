@@ -1,9 +1,13 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import kbn from 'app/core/utils/kbn';
 import * as dateMath from 'app/core/utils/datemath';
 import PrometheusMetricFindQuery from './metric_find_query';
 import TableModel from 'app/core/table_model';
+import { ResponseTransformer } from './result_transformer';
+
+const durationSplitRegexp = /(\d+)(ms|s|m|h|d|w|M|y)/;
 
 function prometheusSpecialRegexEscape(value) {
   return value.replace(/[\\^$*+?.()|[\]{}]/g, '\\\\$&');
@@ -124,6 +128,16 @@ export class PrometheusDatasource {
             }
           }
         }
+        var transformer = new ResponseTransformer(this.templateSrv);
+        transformer.transform(result, response.data.data.result, activeTargets[index], start, end);
+
+        // if (activeTargets[index].format === "table") {
+        //   result.push(self.transformMetricDataToTable(response.data.data.result));
+        // } else {
+        //   for (let metricData of response.data.data.result) {
+        //     result.push(self.transformMetricData(metricData, activeTargets[index], start, end));
+        //   }
+        // }
       });
 
       return { data: result };
@@ -410,5 +424,20 @@ export class PrometheusDatasource {
       date = dateMath.parse(date, roundUp);
     }
     return Math.ceil(date.valueOf() / 1000);
+  }
+
+  calculateInterval(interval, intervalFactor) {
+    return Math.ceil(this.intervalSeconds(interval) * intervalFactor);
+  }
+
+  intervalSeconds(interval) {
+    var m = interval.match(durationSplitRegexp);
+    var dur = moment.duration(parseInt(m[1]), m[2]);
+    var sec = dur.asSeconds();
+    if (sec < 1) {
+      sec = 1;
+    }
+
+    return sec;
   }
 }

@@ -31,9 +31,12 @@ class PrometheusQueryCtrl extends QueryCtrl {
       return { factor: f, label: '1/' + f };
     });
 
-    this.formats = [{ text: 'Time series', value: 'time_series' }, { text: 'Table', value: 'table' }];
-
     this.instant = false;
+    this.formats = [
+      { text: 'Time series', value: 'time_series' },
+      { text: 'Table', value: 'table' },
+      { text: 'Heatmap', value: 'heatmap' },
+    ];
 
     this.updateLink();
   }
