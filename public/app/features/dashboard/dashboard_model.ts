@@ -279,6 +279,36 @@ export class DashboardModel {
     this.events.emit('repeats-processed');
   }
 
+  processRowRepeats(row: PanelModel) {
+    this.iteration = (this.iteration || new Date().getTime()) + 1;
+    let rowPanels;
+
+    if (row.collapsed) {
+      rowPanels = row.panels;
+    } else {
+      let rowPanelIndex = _.findIndex(this.panels, p => p.id === row.id);
+      rowPanels = this.getRowPanels(rowPanelIndex);
+    }
+
+    let panelsToRemove = [];
+    for (let i = 0; i < rowPanels.length; i++) {
+      let panel = rowPanels[i];
+      if (!panel.repeat && panel.repeatPanelId && panel.repeatIteration !== this.iteration) {
+        panelsToRemove.push(panel);
+      }
+    }
+    _.pull(rowPanels, ...panelsToRemove);
+    _.pull(this.panels, ...panelsToRemove);
+
+    for (let i = 0; i < rowPanels.length; i++) {
+      let panel = rowPanels[i];
+      if (panel.repeat) {
+        let panelIndex = _.findIndex(this.panels, p => p.id === panel.id);
+        this.repeatPanel(panel, panelIndex);
+      }
+    }
+  }
+
   getPanelRepeatClone(sourcePanel, valueIndex, sourcePanelIndex) {
     // if first clone return source
     if (valueIndex === 0) {
@@ -569,7 +599,7 @@ export class DashboardModel {
 
     if (row.collapsed) {
       row.collapsed = false;
-      let hasRepeat = false;
+      let hasRepeat = _.some(row.panels, p => p.repeat);
 
       if (row.panels.length > 0) {
         // Use first panel to figure out if it was moved or pushed
@@ -606,7 +636,8 @@ export class DashboardModel {
         row.panels = [];
 
         if (hasRepeat) {
-          this.processRepeats();
+          // this.processRepeats();
+          this.processRowRepeats(row);
         }
       }
 
