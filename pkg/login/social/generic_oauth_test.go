@@ -774,3 +774,56 @@ func TestPayloadCompression(t *testing.T) {
 		})
 	}
 }
+
+func TestAttributesParsing(t *testing.T) {
+	provider := SocialGenericOAuth{
+		SocialBase: &SocialBase{
+			log: newLogger("generic_oauth_test", "debug"),
+		},
+		emailAttributePath: "email",
+	}
+
+	tests := []struct {
+		Name               string
+		OAuth2Extra        interface{}
+		ExpectedAttributes map[string][]string
+	}{
+		{
+			Name: "Given attributes as a map of string slices",
+			OAuth2Extra: map[string]interface{}{
+				// { "email": "john.doe@example.com", "attributes": {"foo": ["bar"]} }
+				"id_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiYXR0cmlidXRlcyI6eyJmb28iOlsiYmFyIl19fQ.YNASoVFLXK85KGHwdFk8QCD9lvxVrtU9m6Hlb2NPpic",
+			},
+			ExpectedAttributes: map[string][]string{
+				"foo": {"bar"},
+			},
+		},
+		{
+			Name: "Given attributes as a map of strings",
+			OAuth2Extra: map[string]interface{}{
+				// { "email": "john.doe@example.com", "attributes": {"foo": "bar"} }
+				"id_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiYXR0cmlidXRlcyI6eyJmb28iOiJiYXIifX0.kxOtrl6vNcLxrc548Z5RIsTAqX4yx3kjNrJ4x9a1Gnw",
+			},
+			ExpectedAttributes: map[string][]string{
+				"foo": {"bar"},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.Name, func(t *testing.T) {
+			staticToken := oauth2.Token{
+				AccessToken:  "",
+				TokenType:    "",
+				RefreshToken: "",
+				Expiry:       time.Now(),
+			}
+
+			token := staticToken.WithExtra(test.OAuth2Extra)
+			userInfo := provider.extractFromToken(token)
+
+			require.NotNil(t, userInfo)
+			require.EqualValues(t, test.ExpectedAttributes, userInfo.Attributes)
+		})
+	}
+}

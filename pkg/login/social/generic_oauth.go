@@ -266,16 +266,64 @@ func (s *SocialGenericOAuth) extractFromToken(token *oauth2.Token) *UserInfoJson
 		}
 	}
 
-	var data UserInfoJson
-	if err := json.Unmarshal(rawJSON, &data); err != nil {
-		s.log.Error("Error decoding id_token JSON", "raw_json", string(data.rawJSON), "error", err)
+	data, err := unmarshalUserInfo(rawJSON)
+	if err != nil {
+		s.log.Error("Error decoding id_token JSON", "raw_json", string(rawJSON), "error", err)
 		return nil
 	}
 
 	data.rawJSON = rawJSON
 	data.source = "token"
 	s.log.Debug("Received id_token", "raw_json", string(data.rawJSON), "data", data.String())
-	return &data
+	return data
+}
+
+func unmarshalUserInfo(rawJSON []byte) (*UserInfoJson, error) {
+	var dataTmp struct {
+		Name        string `json:"name"`
+		DisplayName string `json:"display_name"`
+		Login       string `json:"login"`
+		Username    string `json:"username"`
+		Email       string `json:"email"`
+		Upn         string `json:"upn"`
+		rawJSON     []byte
+		source      string
+	}
+
+	if err := json.Unmarshal(rawJSON, &dataTmp); err != nil {
+		return nil, err
+	}
+
+	var data = UserInfoJson{
+		Name:        dataTmp.Name,
+		DisplayName: dataTmp.DisplayName,
+		Login:       dataTmp.Login,
+		Username:    dataTmp.Username,
+		Email:       dataTmp.Email,
+		Upn:         dataTmp.Upn,
+		Attributes:  map[string][]string{},
+	}
+
+	var atrTmpSlice struct {
+		Attributes map[string][]string `json:"attributes"`
+	}
+
+	var atrTmpString struct {
+		Attributes map[string]string `json:"attributes"`
+	}
+
+	if err := json.Unmarshal(rawJSON, &atrTmpSlice); err == nil {
+		data.Attributes = atrTmpSlice.Attributes
+	} else {
+		if err := json.Unmarshal(rawJSON, &atrTmpString); err != nil {
+			return nil, errors.New("unexpected attributes type")
+		}
+		for k, v := range atrTmpString.Attributes {
+			data.Attributes[k] = []string{v}
+		}
+	}
+
+	return &data, nil
 }
 
 func (s *SocialGenericOAuth) extractFromAPI(client *http.Client) *UserInfoJson {
