@@ -35,7 +35,7 @@ function applyAnimation(canvas: HTMLCanvasElement) {
   const canvasWidth = canvas.width;
   const canvasHeight = canvas.height;
   const cellSize = 8;
-  const particlesNum = 4000;
+  const particlesNum = 6000;
   const speed = 3;
   const wind = 0.05;
   let lastTime = 0;
@@ -117,8 +117,8 @@ function applyAnimation(canvas: HTMLCanvasElement) {
         const defPoint = getDefinitionPoint(definition, width, p[0], p[1] + 1);
         const pointOnLeft = getDefinitionPoint(definition, width, p[0] - 1, p[1] + 1);
         const pointOnRight = getDefinitionPoint(definition, width, p[0] + 1, p[1] + 1);
-        const chanceToStick = Math.random() * (pointOnLeft + pointOnRight - 0.5) * (1.5 - p[2] / speed);
-        if (defPoint === 1 && chanceToStick > 0.81) {
+        const chanceToStick = Math.random() * (pointOnLeft + pointOnRight - 0.905);
+        if (defPoint === 1 && chanceToStick > 0.91) {
           // stop particle
           setDefinitionPoint(definition, width, pX, pY, 1);
           stoppedParticles.push([pX, pY]);
@@ -159,7 +159,7 @@ function getImageDefinition(imageData: ImageData): number[] {
   const definition: number[] = [];
   for (let i = 0; i < imageData.data.length; i += 4) {
     const hsla = rgbToHsla([imageData.data[i], imageData.data[i + 1], imageData.data[i + 2], imageData.data[i + 3]]);
-    if (hsla[1] > 0.25 && hsla[2] * hsla[3] > 0.25) {
+    if ((hsla[1] > 0.25 && hsla[2] * hsla[3] > 0.25) || hsla[3] > 0.9) {
       definition.push(1);
     } else {
       definition.push(0);
