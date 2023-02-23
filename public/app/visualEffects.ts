@@ -95,8 +95,11 @@ function applyAnimation(canvas: HTMLCanvasElement) {
         // ctx.fillStyle = 'rgba(240, 240, 250, 255)';
         // ctx.fillRect(stoppedParticles[i][0], stoppedParticles[i][1], 1, 1);
         const redIndex = (stoppedParticles[i][1] * width + stoppedParticles[i][0]) * 4;
-        image.data[redIndex] = 240;
-        image.data[redIndex + 1] = 240;
+        let rg = 240;
+        const colorChance = Math.random();
+        rg = 240 + colorChance * 10;
+        image.data[redIndex] = rg;
+        image.data[redIndex + 1] = rg;
         image.data[redIndex + 2] = 250;
         image.data[redIndex + 3] = 255;
       }
