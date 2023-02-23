@@ -110,6 +110,7 @@ import { createQueryVariableAdapter } from './features/variables/query/adapter';
 import { createSystemVariableAdapter } from './features/variables/system/adapter';
 import { createTextBoxVariableAdapter } from './features/variables/textbox/adapter';
 import { configureStore } from './store/configureStore';
+import { initVisualEffects } from './visualEffects';
 
 // add move to lodash for backward compatabilty with plugins
 // @ts-ignore
@@ -168,6 +169,9 @@ export class GrafanaApp {
       initExtensions();
 
       initAlerting();
+
+      // Apply some animation effects
+      initVisualEffects();
 
       standardEditorsRegistry.setInit(getAllOptionEditors);
       standardFieldConfigEditorRegistry.setInit(getAllStandardFieldConfigs);
