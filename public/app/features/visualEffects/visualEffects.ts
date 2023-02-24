@@ -1,10 +1,16 @@
+import appEvents from 'app/core/app_events';
+
+import { CanvasEffect } from './canvasEffect';
 import { CanvasEffectSnow } from './snow';
+import { AnimationEffectPayload } from './types';
 
 export async function initVisualEffects() {
-  window.addEventListener('load', (e) => onLoad(e));
+  const effectObjects: CanvasEffect[] = [];
+  appEvents.on('visual-effect-start', (payload: AnimationEffectPayload) => startAnimation(effectObjects, payload));
+  appEvents.on('visual-effect-cancel', () => cancelAnimation(effectObjects));
 }
 
-async function onLoad(e: Event) {
+async function startAnimation(effectObjects: CanvasEffect[], payload: AnimationEffectPayload) {
   console.log('Start animations');
   const canvasList = await waitForCanvasLoaded();
   console.log(canvasList);
@@ -12,12 +18,20 @@ async function onLoad(e: Event) {
     for (let i = 0; i < canvasList.length; i++) {
       const canvas = canvasList[i];
       const snowEffect = new CanvasEffectSnow(canvas, {
-        particlesNumber: 6000,
-        speed: 2,
-        wind: 0.05,
+        particlesNumber: payload.particlesNumber || 6000,
+        speed: payload.speed || 2,
+        wind: payload.wind || 0.05,
       });
+      effectObjects.push(snowEffect);
+
       snowEffect.startAnimation();
     }
+  }
+}
+
+async function cancelAnimation(effectObjects: CanvasEffect[]) {
+  for (const effect of effectObjects) {
+    effect.cancelAnimation();
   }
 }
 
