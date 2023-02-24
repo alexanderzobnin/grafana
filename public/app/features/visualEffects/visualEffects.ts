@@ -1,6 +1,7 @@
 import appEvents from 'app/core/app_events';
 
 import { CanvasEffect } from './canvasEffect';
+import { CanvasEffectScreen } from './screenEffect';
 import { CanvasEffectSnow } from './snow';
 import { AnimationEffectPayload } from './types';
 
@@ -17,14 +18,22 @@ async function startAnimation(effectObjects: CanvasEffect[], payload: AnimationE
   if (canvasList?.length) {
     for (let i = 0; i < canvasList.length; i++) {
       const canvas = canvasList[i];
-      const snowEffect = new CanvasEffectSnow(canvas, {
-        particlesNumber: payload.particlesNumber || 6000,
-        speed: payload.speed || 2,
-        wind: payload.wind || 0.05,
-      });
-      effectObjects.push(snowEffect);
+      // const snowEffect = new CanvasEffectSnow(canvas, {
+      //   particlesNumber: payload.particlesNumber || 6000,
+      //   speed: payload.speed || 2,
+      //   wind: payload.wind || 0.05,
+      // });
+      // effectObjects.push(snowEffect);
 
-      snowEffect.startAnimation();
+      // snowEffect.startAnimation();
+
+      const screenEffect = new CanvasEffectScreen(canvas, {
+        cellSize: 6,
+        debug: true,
+      });
+      effectObjects.push(screenEffect);
+
+      screenEffect.startAnimation();
     }
   }
 }
