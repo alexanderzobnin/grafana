@@ -74,3 +74,12 @@ export function rgbaToHsla(rgb: [number, number, number, number]): [number, numb
   hue = hue < 0 ? hue + 360 : hue;
   return [hue, saturation, luminace, alpha];
 }
+
+// Standard Normal variate using Box-Muller transform.
+export function gaussianRandom(): number {
+  const u = 1 - Math.random(); //Converting [0,1) to (0,1)
+  const v = Math.random();
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  // Resample if out of range
+  return z >= 0 && z <= 1 ? z : gaussianRandom();
+}

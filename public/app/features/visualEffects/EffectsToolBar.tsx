@@ -11,7 +11,7 @@ export const EffectsToolBar = () => {
   const [selectedEffect, setSelectedEffect] = useState('snow');
   const [particlesNumber, setparticlesNumber] = useState(5000);
   const [speed, setSpeed] = useState(1);
-  const [wind, setWind] = useState(0.05);
+  const [wind, setWind] = useState(0.5);
   const theme = useTheme2();
   const styles = getStyles(theme);
 
@@ -50,7 +50,7 @@ export const EffectsToolBar = () => {
         />
       </Field>
       <Field label="Wind" className={styles.label}>
-        <Slider min={0} max={1} step={0.05} value={wind} onChange={(val) => setWind(val)} />
+        <Slider min={0} max={10} step={0.1} value={wind} onChange={(val) => setWind(val)} />
       </Field>
     </div>
   );

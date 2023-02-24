@@ -1,7 +1,7 @@
 import { CanvasEffect, CanvasEffectOptions } from './canvasEffect';
-import { getImageDefinition, getDefinitionPoint, setDefinitionPoint } from './utils';
+import { getImageDefinition, getDefinitionPoint, setDefinitionPoint, gaussianRandom } from './utils';
 
-type Particle = [number, number, number, string];
+type Particle = [number, number, number, string, number];
 
 export interface CanvasEffectSnowOptions extends CanvasEffectOptions {
   particlesNumber: number;
@@ -21,7 +21,7 @@ export class CanvasEffectSnow extends CanvasEffect {
     const { particlesNumber, speed, wind } = options;
     this.particlesNum = particlesNumber || 6000;
     this.speed = speed || 3;
-    this.wind = wind || 0.05;
+    this.wind = wind || 0.5;
   }
 
   startAnimation() {
@@ -106,7 +106,6 @@ export class CanvasEffectSnow extends CanvasEffect {
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
       if (ctx && p) {
-        // ctx.fillStyle = 'rgba(240, 240, 250, 1)';
         const pX = Math.floor(p[0]);
         const pY = Math.floor(p[1]);
 
@@ -123,7 +122,7 @@ export class CanvasEffectSnow extends CanvasEffect {
           stoppedParticles.push([pX, pY]);
           particles[i] = null;
         } else if (p[1] < this.canvasHeight - 1) {
-          p[0] += (Math.random() - 0.5) * 0.5 * p[2] + wind * p[2] * p[2];
+          p[0] += Math.sin(p[1] / ((p[4] + 0.3) * 20 * speed * 4) + p[4] * 10) + wind * wind * p[2];
           p[1] += p[2];
         } else {
           if (Math.random() > 0) {
@@ -146,11 +145,11 @@ export class CanvasEffectSnow extends CanvasEffect {
 }
 
 function makeParticle(width: number, height: number, speed: number): Particle {
-  const velocityRatio = Math.random();
+  const velocityRatio = gaussianRandom();
   const velocity = (velocityRatio + 0.5) * speed;
   const alpha = velocityRatio + 0.1;
   const color = `rgba(240, 240, 250, ${alpha > 1 ? 1 : alpha})`;
   const x = Math.ceil(Math.random() * width);
   const y = x < 10 ? Math.random() * height : 0;
-  return [x, y, velocity, color];
+  return [x, y, velocity, color, Math.random()];
 }
