@@ -26,6 +26,8 @@ export class CanvasEffectScreen extends CanvasEffect {
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
     const cellSize = this.cellSize;
+    const intermediateWidth = 640;
+    const intermediateHeight = 480;
 
     const ctx = canvas.getContext('2d');
 
@@ -40,9 +42,10 @@ export class CanvasEffectScreen extends CanvasEffect {
     // const initialDefSize = definition.reduce((acc, curr) => acc + curr, 0);
 
     let image = ctx?.getImageData(0, 0, canvasWidth, canvasHeight);
-    const resizedImageData = resizeImage(image.data, image.width, image.height, 480);
-    const resizedImage = new ImageData(resizedImageData, image.width);
-    console.log(resizedImage.width, resizedImage.height);
+    const resizedImageData = resizeImage(image.data, image.width, image.height, intermediateHeight);
+    const resizedImageWidth = resizedImageData.length / 4 / intermediateHeight;
+    const resizedImage = new ImageData(resizedImageData, resizedImageWidth);
+    console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
     ctx.putImageData(resizedImage, 0, 0);
 
     // const width = image.width;
@@ -204,7 +207,9 @@ function resizeImage(
   const destWidth = Math.floor(width / resizeFactor);
 
   // Go through rows
-  for (let i = 0; i < imageData.length; i += rowSize * resizeFactorFloor) {
+  let iRow = 0;
+  let i = 0;
+  while (iRow < imageData.length / rowSize - resizeFactorFloor) {
     for (let j = 0; j < rowSize; j++) {
       let newColor = 0;
       for (let k = 0; k < cellSize; k++) {
@@ -216,8 +221,35 @@ function resizeImage(
       }
       resizedData.push(newColor);
     }
+    iRow += resizeFactor;
+    i = Math.floor(iRow) * rowSize;
   }
 
-  const resized = new Uint8ClampedArray(resizedData);
+  console.log(resizedData.length / destHeight / 4);
+  console.log(width);
+  console.log(resizedData.length / width / 4);
+  // Go through columns
+  const resizedColumns: number[] = [];
+  for (let j = 0; j < resizedData.length; j += rowSize) {
+    let iCol = 0;
+    i = 0;
+    while (i < rowSize - resizeFactorFloor * cellSize * 4) {
+      for (let colorIdx = 0; colorIdx < 4; colorIdx++) {
+        let newColor = 0;
+        for (let k = 0; k < cellSize; k++) {
+          let colorWeight = 1;
+          if (k > resizeFactorFloor) {
+            colorWeight = resizeFactor - resizeFactorFloor;
+          }
+          newColor += resizedData[j + i + k * 4 + colorIdx] * colorWeight;
+        }
+        resizedColumns.push(newColor);
+      }
+      iCol += resizeFactor;
+      i = Math.floor(iCol) * 4;
+    }
+  }
+
+  const resized = new Uint8ClampedArray(resizedColumns);
   return resized;
 }
