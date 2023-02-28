@@ -65,10 +65,17 @@ export class CanvasEffectScreen extends CanvasEffect {
 
     const lanczos = new LanczosFilter(2);
     const startTs = performance.now();
-    const resizedImage = lanczos.resize(image.data, image.width, image.height, reScaleWidth, reScaleHeight);
+    // const resizedImage = lanczos.resize(
+    //   image.data,
+    //   image.width,
+    //   image.height,
+    //   Math.floor(image.width * 1.1),
+    //   Math.floor(image.height * 1.1)
+    // );
+    const resizedImage = lanczos.resizeVH(image.data, image.width, image.height, image.width, reScaleHeight);
     console.log(`Resize time: ${Math.floor(performance.now() - startTs)} ms`);
     console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
-    convertImageGamma(resizedImage, 2);
+    // convertImageGamma(resizedImage, 2);
     console.log(`Total time: ${Math.floor(performance.now() - startTs)} ms`);
 
     return resizedImage;

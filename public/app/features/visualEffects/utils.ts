@@ -84,6 +84,28 @@ export function gaussianRandom(): number {
   return z >= 0 && z <= 1 ? z : gaussianRandom();
 }
 
+const M_PI = Math.PI;
+
+function lanczosCreate(lobes: number) {
+  return (x: number) => {
+    if (x >= lobes || x <= -lobes) {
+      return 0;
+    }
+    if (x < 1.1920929e-7 && x > -1.1920929e-7) {
+      return 1.0;
+    }
+    // if (x === 0) {
+    //   return 1;
+    // }
+    // if (x >= lobes || x <= -lobes) {
+    //   return 0;
+    // }
+    x *= Math.PI;
+    const xx = x / lobes;
+    return ((Math.sin(x) / x) * Math.sin(xx)) / xx;
+  };
+}
+
 export class LanczosFilter {
   lanczosLobes: number;
   scaleX: number;
@@ -99,18 +121,49 @@ export class LanczosFilter {
     this.rcpScaleY = 1 / this.scaleY;
   }
 
-  lanczosCreate(lobes: number) {
-    return (x: number) => {
-      if (x >= lobes || x <= -lobes) {
-        return 0.0;
+  resizeVH(srcData: Uint8ClampedArray, oW: number, oH: number, dW: number, dH: number): ImageData {
+    const scaleX = dW / oW;
+    const scaleY = dH / oH;
+    const resizedData: number[] = [];
+    const scaleFactor = dH / oH;
+    const resizeFactorFloor = Math.floor(scaleFactor);
+    const cellSize = Math.ceil(scaleFactor);
+    const rowSize = oW * 4;
+
+    const lobes = this.lanczosLobes;
+    const lanczosCore = lanczosCreate(lobes);
+    const windowRadius = Math.ceil(lobes / scaleFactor / 2);
+
+    const destImg = new ImageData(dW, dH);
+    const destData = destImg.data;
+
+    // Go through rows
+    let i = 0;
+    let destIdx = 0;
+    while (i < dH) {
+      // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
+      const center = (i + 0.5) / scaleFactor - 0.5;
+      const windowStart = Math.max(Math.floor(center - windowRadius), 0);
+      const windowEnd = Math.min(Math.floor(center + windowRadius), oH);
+      for (let j = 0; j < rowSize; j++) {
+        let newColor = 0;
+        let colorWeight = 0;
+        let density = 0;
+        for (let k = windowStart; k <= windowEnd; k++) {
+          const idxNormalized = center - k;
+          colorWeight = lanczosCore(idxNormalized);
+          density += colorWeight;
+          newColor += srcData[rowSize * k + j] * colorWeight;
+        }
+        newColor = Math.round(newColor);
+        destData[destIdx] = newColor / density;
+        destIdx++;
       }
-      if (x < 1.1920929e-7 && x > -1.1920929e-7) {
-        return 1.0;
-      }
-      x *= Math.PI;
-      const xx = x / lobes;
-      return ((Math.sin(x) / x) * Math.sin(xx)) / xx;
-    };
+      i++;
+    }
+
+    // const resized = new Uint8ClampedArray(resizedColumns);
+    return destImg;
   }
 
   // Implementation from fabric.js
@@ -123,7 +176,7 @@ export class LanczosFilter {
 
     const destImg = new ImageData(dW, dH);
     const destData = destImg.data;
-    const lanczos = this.lanczosCreate(this.lanczosLobes);
+    const lanczos = lanczosCreate(this.lanczosLobes);
     const ratioX = this.rcpScaleX;
     const ratioY = this.rcpScaleY;
     const rcpRatioX = 2 / this.rcpScaleX;
@@ -145,6 +198,7 @@ export class LanczosFilter {
       let alpha: number;
       let fX: number;
       let fY: number;
+      let dXY: number;
 
       center.x = (u + 0.5) * ratioX;
       icenter.x = Math.floor(center.x);
@@ -167,7 +221,8 @@ export class LanczosFilter {
               continue;
             }
             fY = Math.floor(1000 * Math.abs(j - center.y));
-            weight = lanczos(Math.sqrt(Math.pow(fX * rcpRatioX, 2) + Math.pow(fY * rcpRatioY, 2)) / 1000);
+            dXY = Math.sqrt(Math.pow(fX * rcpRatioX, 2) + Math.pow(fY * rcpRatioY, 2)) / 1000;
+            weight = lanczos(dXY);
             if (weight > 0) {
               idx = (j * oW + i) * 4;
               a += weight;
