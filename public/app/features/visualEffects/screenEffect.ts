@@ -1,12 +1,5 @@
 import { CanvasEffect, CanvasEffectOptions } from './canvasEffect';
-import {
-  getImageDefinition,
-  getDefinitionPoint,
-  setDefinitionPoint,
-  gaussianRandom,
-  LanczosFilter,
-  convertImageGamma,
-} from './utils';
+import { LanczosFilter } from './resize';
 
 export interface CanvasEffectScreenOptions extends CanvasEffectOptions {
   cellSize: number;
@@ -32,7 +25,7 @@ export class CanvasEffectScreen extends CanvasEffect {
   applyAnimation(canvas: HTMLCanvasElement) {
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
-    const cellSize = this.cellSize;
+    // const cellSize = this.cellSize;
 
     const ctx = canvas.getContext('2d');
 
@@ -72,7 +65,7 @@ export class CanvasEffectScreen extends CanvasEffect {
     //   Math.floor(image.width * 1.1),
     //   Math.floor(image.height * 1.1)
     // );
-    const resizedImage = lanczos.resizeVH(image.data, image.width, image.height, image.width, reScaleHeight);
+    const resizedImage = lanczos.resizeVH(image.data, image.width, image.height, reScaleWidth, reScaleHeight);
     console.log(`Resize time: ${Math.floor(performance.now() - startTs)} ms`);
     console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
     // convertImageGamma(resizedImage, 2);
