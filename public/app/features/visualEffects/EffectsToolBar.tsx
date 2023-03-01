@@ -5,10 +5,13 @@ import { GrafanaTheme2, SelectableValue } from '@grafana/data';
 import { Button, VerticalGroup, Dropdown, Menu, HorizontalGroup, useTheme2, Select, Slider, Field } from '@grafana/ui';
 import appEvents from 'app/core/app_events';
 
-const effectsOptions: Array<SelectableValue<string>> = [{ value: 'snow', label: 'Snow' }];
+const effectsOptions: Array<SelectableValue<string>> = [
+  { value: 'snow', label: 'Snow' },
+  { value: 'crt-display', label: 'CRT Display' },
+];
 
 export const EffectsToolBar = () => {
-  const [selectedEffect, setSelectedEffect] = useState('snow');
+  const [selectedEffect, setSelectedEffect] = useState('crt-display');
   const [particlesNumber, setparticlesNumber] = useState(5000);
   const [speed, setSpeed] = useState(1);
   const [wind, setWind] = useState(0.5);
@@ -16,7 +19,7 @@ export const EffectsToolBar = () => {
   const styles = getStyles(theme);
 
   const onStart = () => {
-    appEvents.emit('visual-effect-start', { particlesNumber, speed });
+    appEvents.emit('visual-effect-start', { effect: selectedEffect, particlesNumber, speed });
   };
 
   const onStop = () => {
@@ -55,6 +58,8 @@ export const EffectsToolBar = () => {
     </div>
   );
 
+  const crtControls = <></>;
+
   const menu = (
     <Menu onClick={onMenuClick}>
       <div className={styles.menuWrapper}>
@@ -74,6 +79,7 @@ export const EffectsToolBar = () => {
             </Button>
           </HorizontalGroup>
           {selectedEffect === 'snow' && snowControls}
+          {selectedEffect === 'crt-display' && crtControls}
         </VerticalGroup>
       </div>
     </Menu>

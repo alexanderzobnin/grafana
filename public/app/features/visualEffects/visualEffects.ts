@@ -13,27 +13,32 @@ export async function initVisualEffects() {
 
 async function startAnimation(effectObjects: CanvasEffect[], payload: AnimationEffectPayload) {
   console.log('Start animations');
+  const { effect } = payload;
   const canvasList = await waitForCanvasLoaded();
   console.log(canvasList);
   if (canvasList?.length) {
     for (let i = 0; i < canvasList.length; i++) {
       const canvas = canvasList[i];
-      // const snowEffect = new CanvasEffectSnow(canvas, {
-      //   particlesNumber: payload.particlesNumber || 6000,
-      //   speed: payload.speed || 2,
-      //   wind: payload.wind || 0.05,
-      // });
-      // effectObjects.push(snowEffect);
 
-      // snowEffect.startAnimation();
+      if (effect === 'snow') {
+        const snowEffect = new CanvasEffectSnow(canvas, {
+          particlesNumber: payload.particlesNumber || 6000,
+          speed: payload.speed || 2,
+          wind: payload.wind || 0.05,
+        });
+        effectObjects.push(snowEffect);
 
-      const screenEffect = new CanvasEffectScreen(canvas, {
-        cellSize: 6,
-        debug: true,
-      });
-      effectObjects.push(screenEffect);
+        snowEffect.startAnimation();
+      }
+      if (effect === 'crt-display') {
+        const screenEffect = new CanvasEffectScreen(canvas, {
+          cellSize: 6,
+          debug: true,
+        });
+        effectObjects.push(screenEffect);
 
-      screenEffect.startAnimation();
+        screenEffect.startAnimation();
+      }
     }
   }
 }
