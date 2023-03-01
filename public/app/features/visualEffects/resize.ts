@@ -1,9 +1,11 @@
 import { scanlineMagnitude } from './utils';
 
 function lanczosCreate(lobes: number) {
+  const precision = 1000;
   const cache: Map<number, number> = new Map();
+  // console.log(cache);
   return (x: number) => {
-    const xRound = Math.floor(x * 1000);
+    const xRound = Math.floor(x * precision);
     const cached = cache.get(xRound);
     if (cached !== undefined) {
       return cached;
