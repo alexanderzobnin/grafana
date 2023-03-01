@@ -1,22 +1,31 @@
 import { scanlineMagnitude } from './utils';
 
 function lanczosCreate(lobes: number) {
+  const cache: Map<number, number> = new Map();
   return (x: number) => {
+    const xRound = Math.floor(x * 1000);
+    const cached = cache.get(xRound);
+    if (cached !== undefined) {
+      return cached;
+    }
     if (x >= lobes || x <= -lobes) {
+      cache.set(xRound, 0);
       return 0;
     }
-    if (x < 1.1920929e-7 && x > -1.1920929e-7) {
-      return 1.0;
-    }
-    // if (x === 0) {
+    // Values around 0
+    // if (x < 1.1920929e-7 && x > -1.1920929e-7) {
+    //   cache.set(xRound, 1);
     //   return 1;
     // }
-    // if (x >= lobes || x <= -lobes) {
-    //   return 0;
-    // }
+    if (x === 0) {
+      cache.set(xRound, 1);
+      return 1;
+    }
     x *= Math.PI;
     const xx = x / lobes;
-    return ((Math.sin(x) / x) * Math.sin(xx)) / xx;
+    const res = ((Math.sin(x) / x) * Math.sin(xx)) / xx;
+    cache.set(xRound, res);
+    return res;
   };
 }
 
