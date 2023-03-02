@@ -1,5 +1,6 @@
 import { CanvasEffect, CanvasEffectOptions } from './canvasEffect';
-import { LanczosFilter } from './resize';
+import { LanczosFilter, nearestNeighborResize } from './resize';
+import { convertImageGamma } from './utils';
 
 export interface CanvasEffectScreenOptions extends CanvasEffectOptions {
   cellSize: number;
@@ -56,6 +57,23 @@ export class CanvasEffectScreen extends CanvasEffect {
     const reScaleWidth = Math.floor(image.width * reScaleFactor);
     // const intermediateWidth = Math.floor(image.width * scaleFactor);
 
+    const numHorizPixels = 640;
+    const numVertPixels = 480;
+    const CellWidth0 = 2,
+      CellBlank0 = 1; // R
+    const CellWidth1 = 2,
+      CellBlank1 = 1; // G
+    const CellWidth2 = 2,
+      CellBlank2 = 2; // B
+    const totalHorizRes =
+      numHorizPixels * (CellWidth0 + CellBlank0 + CellWidth1 + CellBlank1 + CellWidth2 + CellBlank2);
+
+    const cellHeight0 = 5; // Height of RGB triplet
+    const cellHeight1 = 1; // Blank after RGB triplet
+    const cellStagger = 3; // Offset of successive columns
+    const totalVertRes = numVertPixels * (cellHeight0 + cellHeight1);
+    console.log(totalVertRes);
+
     const lanczos = new LanczosFilter(2);
     const startTs = performance.now();
     // const resizedImage = lanczos.resize(
@@ -65,10 +83,17 @@ export class CanvasEffectScreen extends CanvasEffect {
     //   Math.floor(image.width * 1.1),
     //   Math.floor(image.height * 1.1)
     // );
-    const resizedImage = lanczos.resize(image.data, image.width, image.height, reScaleWidth, reScaleHeight);
+    let resizedImage = lanczos.resize(image.data, image.width, image.height, reScaleWidth, reScaleHeight);
+
     console.log(`Resize time: ${Math.floor(performance.now() - startTs)} ms`);
     console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
-    // convertImageGamma(resizedImage, 2);
+
+    convertImageGamma(resizedImage, 2);
+
+    const startTsNNResize = performance.now();
+    resizedImage = nearestNeighborResize(resizedImage, totalHorizRes, totalVertRes);
+    console.log(`NN resize time: ${Math.floor(performance.now() - startTsNNResize)} ms`);
+
     console.log(`Total time: ${Math.floor(performance.now() - startTs)} ms`);
 
     return resizedImage;
@@ -103,42 +128,4 @@ export class CanvasEffectScreen extends CanvasEffect {
 
     this.animationFrameHandle = requestAnimationFrame((ts) => this.animationFrame(ts, ctx, image));
   }
-}
-
-function getAverageColor(pixels: number[][]): number[] {
-  const avg = [0, 0, 0, 0];
-  for (let i = 0; i < pixels.length; i++) {
-    for (let j = 0; j < 4; j++) {
-      avg[j] += pixels[i][j];
-    }
-  }
-  for (let j = 0; j < 4; j++) {
-    avg[j] = Math.round(avg[j] / pixels.length);
-  }
-  return avg;
-}
-
-function getCellPixels(
-  imageData: Uint8ClampedArray,
-  width: number,
-  height: number,
-  cellSize: number,
-  x: number,
-  y: number
-): number[][] {
-  const cellWidthX = Math.min(cellSize, width - x);
-  const cellWidthY = Math.min(cellSize, height - y);
-
-  const pixels: number[][] = [];
-  for (let i = 0; i < cellWidthX; i++) {
-    for (let j = 0; j < cellWidthY; j++) {
-      const redIdx = width * 4 * (y + i) + (x + j) * 4;
-      const red = imageData[redIdx];
-      const green = imageData[redIdx + 1];
-      const blue = imageData[redIdx + 2];
-      const alpha = imageData[redIdx + 3];
-      pixels.push([red, green, blue, alpha]);
-    }
-  }
-  return pixels;
 }

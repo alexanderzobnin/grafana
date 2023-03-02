@@ -69,7 +69,7 @@ export class LanczosFilter {
     // Go through rows
     let i = 0;
     let destIdx = 0;
-    while (i < dH) {
+    for (let i = 0; i < dH; i++) {
       // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
       const center = (i + 0.5) / scaleFactorY - 0.5;
       const windowStart = Math.max(Math.floor(center - windowRadius), 0);
@@ -88,7 +88,6 @@ export class LanczosFilter {
         destDataY[destIdx] = newColor / density;
         destIdx++;
       }
-      i++;
     }
 
     // Go through columns
@@ -100,7 +99,7 @@ export class LanczosFilter {
     destIdx = 0;
     let colorWeight = 0;
     // i is a column
-    while (i < dW) {
+    for (let i = 0; i < dW; i++) {
       // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
       const center = (i + 0.5) / scaleFactorX - 0.5;
       const windowStart = Math.max(Math.floor(center - windowRadius), 0);
@@ -120,9 +119,57 @@ export class LanczosFilter {
           destDataX[j * rowSizeX + i * 4 + colorIdx] = newColor / density;
         }
       }
-      i++;
     }
 
     return destImgX;
   }
+}
+
+export function nearestNeighborResize(src: ImageData, dW: number, dH: number): ImageData {
+  const oW = src.width;
+  const oH = src.height;
+  const srcData = src.data;
+
+  const scaleFactorY = dH / oH;
+  const scaleFactorX = dW / oW;
+  const rowSize = oW * 4;
+
+  const destImgY = new ImageData(oW, dH);
+  const destDataY = destImgY.data;
+
+  // Go through rows
+  let i = 0;
+  let destIdx = 0;
+  for (let i = 0; i < dH; i++) {
+    // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
+    const center = (i + 0.5) / scaleFactorY - 0.5;
+    for (let j = 0; j < rowSize; j++) {
+      let newColor = srcData[rowSize * Math.round(center) + j];
+      newColor = Math.round(newColor);
+      destDataY[destIdx] = newColor;
+      destIdx++;
+    }
+  }
+
+  // Go through columns
+  const destImgX = new ImageData(dW, dH);
+  const destDataX = destImgX.data;
+  const rowSizeX = dW * 4;
+  i = 0;
+  destIdx = 0;
+  // i is a column
+  for (let i = 0; i < dW; i++) {
+    // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
+    const center = (i + 0.5) / scaleFactorX - 0.5;
+    // j is a row
+    for (let j = 0; j < dH; j++) {
+      for (let colorIdx = 0; colorIdx < 4; colorIdx++) {
+        let newColor = destDataY[j * rowSize + Math.round(center) * 4 + colorIdx];
+        newColor = Math.round(newColor);
+        destDataX[j * rowSizeX + i * 4 + colorIdx] = newColor;
+      }
+    }
+  }
+
+  return destImgX;
 }
