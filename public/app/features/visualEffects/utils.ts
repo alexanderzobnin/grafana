@@ -100,3 +100,78 @@ export function scanlineMagnitude(n: number) {
   const c = 0.3;
   return Math.exp(-(((n - 0.5) * (n - 0.5)) / (2 * c * c)));
 }
+
+export function applyScanLines(src: ImageData, scanLinesCount: number): ImageData {
+  const srcData = src.data;
+  const rowWidth = src.width * 4;
+
+  const destImg = new ImageData(src.width, src.height);
+  const destData = destImg.data;
+
+  for (let y = 0; y < src.height; y++) {
+    const srcy_flt = (y * scanLinesCount) / src.height;
+    const srcy = Math.floor(srcy_flt);
+    const factor = scanlineMagnitude(srcy_flt - srcy);
+
+    for (let x = 0; x < rowWidth * 4; x++) {
+      destData[y * rowWidth + x] = Math.floor(srcData[y * rowWidth + x] * factor);
+    }
+  }
+
+  return destImg;
+}
+
+export function applyPixelMask(
+  src: ImageData,
+  cellWidth: number,
+  cellHeight: number,
+  cellBlankH: number,
+  cellBlankV: number
+): ImageData {
+  const srcData = src.data;
+  const rowWidth = src.width * 4;
+
+  const destImg = new ImageData(src.width, src.height);
+  const destData = destImg.data;
+
+  const cellShift = Math.ceil(cellHeight / 2);
+
+  const cellWithTotal = (cellWidth + cellBlankH) * 3;
+  const cellHeightTotal = cellHeight + cellBlankV;
+
+  for (let y = 0; y < src.height; y++) {
+    const i = y - Math.floor(y / cellHeightTotal) * cellHeightTotal;
+    for (let x = 0; x < rowWidth; x += cellWithTotal * 4) {
+      for (let j = 0; j < cellWithTotal; j++) {
+        if (i < cellBlankV || i >= cellHeightTotal - cellBlankV) {
+          destData[y * rowWidth + x + j * 4] = 0;
+          destData[y * rowWidth + x + j * 4 + 1] = 0;
+          destData[y * rowWidth + x + j * 4 + 2] = 0;
+          destData[y * rowWidth + x + j * 4 + 3] = 255;
+        } else if (j < cellBlankH || j === cellWidth + cellBlankH || j === (cellWidth + cellBlankH) * 2) {
+          destData[y * rowWidth + x * 4] = 0;
+        } else if (j < cellWidth + cellBlankH) {
+          // red
+          destData[y * rowWidth + x + j * 4] = srcData[y * rowWidth + x];
+          destData[y * rowWidth + x + j * 4 + 1] = 0;
+          destData[y * rowWidth + x + j * 4 + 2] = 0;
+          destData[y * rowWidth + x + j * 4 + 3] = 255;
+        } else if (j < (cellWidth + cellBlankH) * 2) {
+          // green
+          destData[y * rowWidth + x + j * 4] = 0;
+          destData[y * rowWidth + x + j * 4 + 1] = srcData[y * rowWidth + x + 1];
+          destData[y * rowWidth + x + j * 4 + 2] = 0;
+          destData[y * rowWidth + x + j * 4 + 3] = 255;
+        } else if (j < (cellWidth + cellBlankH) * 3) {
+          // blue
+          destData[y * rowWidth + x + j * 4] = 0;
+          destData[y * rowWidth + x + j * 4 + 1] = 0;
+          destData[y * rowWidth + x + j * 4 + 2] = srcData[y * rowWidth + x + 2];
+          destData[y * rowWidth + x + j * 4 + 3] = 255;
+        }
+      }
+    }
+  }
+
+  return destImg;
+}

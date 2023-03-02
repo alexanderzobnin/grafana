@@ -26,7 +26,7 @@ function lanczosFastCreate(lobes: number) {
     results[i] = lanczosCore(x, lobes);
   }
   return (x: number) => {
-    return results[Math.floor((x + lobes) * precision)];
+    return results[Math.floor((x + lobes) * precision)] || 0;
   };
 }
 
@@ -48,7 +48,10 @@ export class LanczosFilter {
     this.rcpScaleY = 1 / this.scaleY;
   }
 
-  resize(srcData: Uint8ClampedArray, oW: number, oH: number, dW: number, dH: number): ImageData {
+  resize(src: ImageData, dW: number, dH: number): ImageData {
+    const srcData = src.data;
+    const oW = src.width;
+    const oH = src.height;
     const scaleFactorY = dH / oH;
     const scaleFactorX = dW / oW;
     const rowSize = oW * 4;
@@ -67,13 +70,12 @@ export class LanczosFilter {
     const destDataY = destImgY.data;
 
     // Go through rows
-    let i = 0;
     let destIdx = 0;
     for (let i = 0; i < dH; i++) {
       // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
       const center = (i + 0.5) / scaleFactorY - 0.5;
-      const windowStart = Math.max(Math.floor(center - windowRadius), 0);
-      const windowEnd = Math.min(Math.floor(center + windowRadius), oH);
+      const windowStart = Math.max(Math.floor(center) - lobes + 1, 0);
+      const windowEnd = Math.min(Math.floor(center) + lobes, oH);
       for (let j = 0; j < rowSize; j++) {
         let newColor = 0;
         let colorWeight = 0;
@@ -95,15 +97,14 @@ export class LanczosFilter {
     const destDataX = destImgX.data;
     const rowSizeX = dW * 4;
     windowRadius = Math.ceil(lobes / scaleFactorX / 2);
-    i = 0;
     destIdx = 0;
     let colorWeight = 0;
     // i is a column
     for (let i = 0; i < dW; i++) {
       // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
       const center = (i + 0.5) / scaleFactorX - 0.5;
-      const windowStart = Math.max(Math.floor(center - windowRadius), 0);
-      const windowEnd = Math.min(Math.floor(center + windowRadius), oW);
+      const windowStart = Math.max(Math.floor(center) - lobes + 1, 0);
+      const windowEnd = Math.min(Math.floor(center) + lobes, oW);
       // j is a row
       for (let j = 0; j < dH; j++) {
         for (let colorIdx = 0; colorIdx < 4; colorIdx++) {
@@ -138,7 +139,6 @@ export function nearestNeighborResize(src: ImageData, dW: number, dH: number): I
   const destDataY = destImgY.data;
 
   // Go through rows
-  let i = 0;
   let destIdx = 0;
   for (let i = 0; i < dH; i++) {
     // center is a point in a scaled image, it's basically x coordinate of lanczos interpolation formula
@@ -155,7 +155,6 @@ export function nearestNeighborResize(src: ImageData, dW: number, dH: number): I
   const destImgX = new ImageData(dW, dH);
   const destDataX = destImgX.data;
   const rowSizeX = dW * 4;
-  i = 0;
   destIdx = 0;
   // i is a column
   for (let i = 0; i < dW; i++) {

@@ -1,6 +1,6 @@
 import { CanvasEffect, CanvasEffectOptions } from './canvasEffect';
 import { LanczosFilter, nearestNeighborResize } from './resize';
-import { convertImageGamma } from './utils';
+import { applyPixelMask, applyScanLines, convertImageGamma } from './utils';
 
 export interface CanvasEffectScreenOptions extends CanvasEffectOptions {
   cellSize: number;
@@ -50,7 +50,7 @@ export class CanvasEffectScreen extends CanvasEffect {
 
   crtFilter(image: ImageData): ImageData {
     // 640x480
-    const intermediateHeight = 480;
+    const intermediateHeight = 400;
     const scanLinesCount = Math.ceil(image.height / intermediateHeight) * intermediateHeight;
     const reScaleFactor = scanLinesCount / image.height;
     const reScaleHeight = scanLinesCount;
@@ -58,7 +58,7 @@ export class CanvasEffectScreen extends CanvasEffect {
     // const intermediateWidth = Math.floor(image.width * scaleFactor);
 
     const numHorizPixels = 640;
-    const numVertPixels = 480;
+    const numVertPixels = intermediateHeight;
     const CellWidth0 = 2,
       CellBlank0 = 1; // R
     const CellWidth1 = 2,
@@ -76,14 +76,7 @@ export class CanvasEffectScreen extends CanvasEffect {
 
     const lanczos = new LanczosFilter(2);
     const startTs = performance.now();
-    // const resizedImage = lanczos.resize(
-    //   image.data,
-    //   image.width,
-    //   image.height,
-    //   Math.floor(image.width * 1.1),
-    //   Math.floor(image.height * 1.1)
-    // );
-    let resizedImage = lanczos.resize(image.data, image.width, image.height, reScaleWidth, reScaleHeight);
+    let resizedImage = lanczos.resize(image, reScaleWidth, reScaleHeight);
 
     console.log(`Resize time: ${Math.floor(performance.now() - startTs)} ms`);
     console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
@@ -92,7 +85,13 @@ export class CanvasEffectScreen extends CanvasEffect {
 
     const startTsNNResize = performance.now();
     resizedImage = nearestNeighborResize(resizedImage, totalHorizRes, totalVertRes);
+    console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
     console.log(`NN resize time: ${Math.floor(performance.now() - startTsNNResize)} ms`);
+
+    resizedImage = applyScanLines(resizedImage, scanLinesCount);
+    resizedImage = applyPixelMask(resizedImage, CellWidth0, cellHeight0, CellBlank0, CellBlank0);
+
+    // resizedImage = lanczos.resize(resizedImage, image.width, image.height);
 
     console.log(`Total time: ${Math.floor(performance.now() - startTs)} ms`);
 
