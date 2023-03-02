@@ -92,7 +92,7 @@ export function convertImageGamma(imageData: ImageData, gamma: number) {
 }
 
 // Converting into linear colors (invert gamma correction)
-function convertGamma(v: number, gamma: number) {
+export function convertGamma(v: number, gamma: number) {
   return Math.pow(v / 255, 1 / gamma) * 255;
 }
 

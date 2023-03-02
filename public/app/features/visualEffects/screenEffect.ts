@@ -65,7 +65,7 @@ export class CanvasEffectScreen extends CanvasEffect {
     //   Math.floor(image.width * 1.1),
     //   Math.floor(image.height * 1.1)
     // );
-    const resizedImage = lanczos.resizeVH(image.data, image.width, image.height, reScaleWidth, reScaleHeight);
+    const resizedImage = lanczos.resize(image.data, image.width, image.height, reScaleWidth, reScaleHeight);
     console.log(`Resize time: ${Math.floor(performance.now() - startTs)} ms`);
     console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
     // convertImageGamma(resizedImage, 2);
