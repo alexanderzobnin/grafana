@@ -11,7 +11,7 @@ const effectsOptions: Array<SelectableValue<string>> = [
 ];
 
 export const EffectsToolBar = () => {
-  const [selectedEffect, setSelectedEffect] = useState('crt-display');
+  const [selectedEffect, setSelectedEffect] = useState('snow');
   const [particlesNumber, setparticlesNumber] = useState(5000);
   const [speed, setSpeed] = useState(1);
   const [wind, setWind] = useState(0.5);
@@ -27,6 +27,7 @@ export const EffectsToolBar = () => {
   };
 
   const onMenuClick = (e: React.MouseEvent) => {
+    // e.preventDefault();
     e.stopPropagation();
   };
 
