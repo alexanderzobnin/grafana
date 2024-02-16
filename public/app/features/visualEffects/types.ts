@@ -5,4 +5,6 @@ export type AnimationEffectPayload = {
   particlesNumber?: number;
   speed?: number;
   wind?: number;
+  debug?: boolean;
+  showDefinitionImage?: boolean;
 };

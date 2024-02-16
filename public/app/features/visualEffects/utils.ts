@@ -2,7 +2,7 @@ export function getImageDefinition(imageData: ImageData): number[] {
   const definition: number[] = [];
   for (let i = 0; i < imageData.data.length; i += 4) {
     const hsla = rgbaToHsla([imageData.data[i], imageData.data[i + 1], imageData.data[i + 2], imageData.data[i + 3]]);
-    if ((hsla[1] > 0.25 && hsla[2] * hsla[3] > 0.25) || hsla[3] > 0.9) {
+    if ((hsla[1] > 0.5 && hsla[2] * hsla[3] > 0.25) || hsla[3] > 0.9) {
       definition.push(1);
     } else {
       definition.push(0);
@@ -134,7 +134,7 @@ export function applyPixelMask(
   const destImg = new ImageData(src.width, src.height);
   const destData = destImg.data;
 
-  const cellShift = Math.ceil(cellHeight / 2);
+  // const cellShift = Math.ceil(cellHeight / 2);
 
   const cellWithTotal = (cellWidth + cellBlankH) * 3;
   const cellHeightTotal = cellHeight + cellBlankV;

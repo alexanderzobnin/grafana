@@ -1,7 +1,20 @@
 import { CanvasEffect, CanvasEffectOptions } from './canvasEffect';
-import { getImageDefinition, getDefinitionPoint, setDefinitionPoint, gaussianRandom } from './utils';
+import {
+  getImageDefinition,
+  getDefinitionPoint,
+  setDefinitionPoint,
+  gaussianRandom,
+  definitionToImageData,
+} from './utils';
 
-type Particle = [number, number, number, string, number];
+interface Particle {
+  x: number;
+  y: number;
+  z: number;
+  velocity: number;
+  color: string;
+  rand: number;
+}
 
 export interface CanvasEffectSnowOptions extends CanvasEffectOptions {
   particlesNumber: number;
@@ -15,8 +28,8 @@ export class CanvasEffectSnow extends CanvasEffect {
   private wind: number;
 
   constructor(canvas: HTMLCanvasElement, options: CanvasEffectSnowOptions) {
-    const { onAnimationCancel, debug } = options;
-    super(canvas, { onAnimationCancel, debug });
+    const { debug, showDefinitionImage } = options;
+    super(canvas, { debug, showDefinitionImage });
 
     const { particlesNumber, speed, wind } = options;
     this.particlesNum = particlesNumber || 6000;
@@ -28,13 +41,16 @@ export class CanvasEffectSnow extends CanvasEffect {
     this.applyAnimation(this.canvas);
   }
 
+  onAnimationCancel() {
+    console.log('cancel animation');
+  }
+
   applyAnimation(canvas: HTMLCanvasElement) {
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
     const particlesNum = this.particlesNum;
 
-    const ctx = canvas.getContext('2d');
-
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) {
       return;
     }
@@ -42,15 +58,19 @@ export class CanvasEffectSnow extends CanvasEffect {
     const initialImage = ctx?.getImageData(0, 0, canvasWidth, canvasHeight);
 
     const definition = getImageDefinition(initialImage);
-    // const defImageData = definitionToImageData(definition, initialImage.width);
-    // const initialDefSize = definition.reduce((acc, curr) => acc + curr, 0);
+    if (this.showDefinitionImage) {
+      // Show definition image
+      const defImageData = definitionToImageData(definition, initialImage.width);
+      ctx?.putImageData(defImageData, 0, 0);
+      // const initialDefSize = definition.reduce((acc, curr) => acc + curr, 0);
+    }
 
     const particles: Array<Particle | null> = [];
     for (let i = 0; i < particlesNum; i++) {
       particles.push(null);
     }
 
-    let stoppedParticles: Array<[number, number]> = [];
+    let stoppedParticles: Array<[number, number, number]> = [];
     let image = ctx?.getImageData(0, 0, canvasWidth, canvasHeight);
 
     this.animationFrame(0, ctx, image, definition, particles, stoppedParticles);
@@ -62,8 +82,12 @@ export class CanvasEffectSnow extends CanvasEffect {
     image: ImageData,
     definition: number[],
     particles: Array<Particle | null>,
-    stoppedParticles: Array<[number, number]>
+    stoppedParticles: Array<[number, number, number]>
   ) {
+    if (!ctx) {
+      return;
+    }
+
     const width = image.width;
     const height = image.height;
     const speed = this.speed;
@@ -71,9 +95,6 @@ export class CanvasEffectSnow extends CanvasEffect {
 
     const deltaTime = ts - this.lastTime;
     this.lastTime = ts;
-    if (this.debug) {
-      console.log(deltaTime);
-    }
 
     // const defImageData = definitionToImageData(definition, image.width);
     // ctx?.putImageData(defImageData, 0, 0);
@@ -88,54 +109,69 @@ export class CanvasEffectSnow extends CanvasEffect {
       }
     }
 
-    if (ctx) {
-      for (let i = 0; i < stoppedParticles.length; i++) {
-        const redIndex = (stoppedParticles[i][1] * width + stoppedParticles[i][0]) * 4;
-        let rg = 240;
-        const colorChance = Math.random();
-        rg = 240 + colorChance * 10;
-        image.data[redIndex] = rg;
-        image.data[redIndex + 1] = rg;
-        image.data[redIndex + 2] = 250;
-        image.data[redIndex + 3] = 255;
-      }
-      stoppedParticles = [];
+    // Put stopped particles into the image and reset buffer
+    for (let i = 0; i < stoppedParticles.length; i++) {
+      const p = stoppedParticles[i];
+      const yRel = p[1] / this.canvasHeight;
+      const redIndex = (p[1] * width + p[0]) * 4;
+      let rg = 240;
+      const colorChance = Math.random();
+      rg = 240 + colorChance * 10 * (p[2] * 0.4 + 0.6) * (yRel * 0.4 + 0.6);
+      image.data[redIndex] = rg;
+      image.data[redIndex + 1] = rg;
+      image.data[redIndex + 2] = 250;
+      image.data[redIndex + 3] = 255;
     }
-    ctx?.putImageData(image, 0, 0);
+    stoppedParticles = [];
+    ctx.putImageData(image, 0, 0);
 
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
-      if (ctx && p) {
-        const pX = Math.floor(p[0]);
-        const pY = Math.floor(p[1]);
+      if (p) {
+        const pX = Math.floor(p.x);
+        const pY = Math.floor(p.y);
+        const pZ = Math.floor(p.z);
 
-        ctx.fillStyle = p[3];
+        ctx.fillStyle = p.color;
         ctx.fillRect(pX, pY, 1, 1);
 
-        const defPoint = getDefinitionPoint(definition, width, p[0], p[1] + 1);
-        const pointOnLeft = getDefinitionPoint(definition, width, p[0] - 1, p[1] + 1);
-        const pointOnRight = getDefinitionPoint(definition, width, p[0] + 1, p[1] + 1);
-        const chanceToStick = Math.random() * (pointOnLeft + pointOnRight - 0.905);
-        if (defPoint === 1 && chanceToStick > 0.91) {
+        const defPoint = getDefinitionPoint(definition, width, p.x, p.y + 1);
+        const pointOnLeft = getDefinitionPoint(definition, width, p.x - 1, p.y + 1);
+        const pointOnRight = getDefinitionPoint(definition, width, p.x + 1, p.y + 1);
+        const yRel = p.y / this.canvasHeight;
+        const chanceToStick = Math.random() * (pointOnLeft + pointOnRight - 0.9) * (1.5 - p.z) * (yRel + 0.5);
+        // const chanceToStick = Math.random() * (p.y / this.canvasHeight * 2);
+        if (defPoint === 1 && chanceToStick > 0.95) {
           // stop particle
           setDefinitionPoint(definition, width, pX, pY, 1);
-          stoppedParticles.push([pX, pY]);
+          stoppedParticles.push([pX, pY, pZ]);
           particles[i] = null;
-        } else if (p[1] < this.canvasHeight - 1) {
-          p[0] += Math.sin(p[1] / ((p[4] + 0.3) * 20 * speed * 4) + p[4] * 10) + wind * wind * p[2];
-          p[1] += p[2];
+        } else if (p.y < this.canvasHeight - 1) {
+          p.x += (Math.sin(p.y / ((p.rand + 0.3) * 20 * speed * 4) + p.rand * 10) + wind) * p.velocity * p.z;
+          p.y += p.velocity * (p.z + 1);
         } else {
           if (Math.random() > 0) {
             setDefinitionPoint(definition, width, pX, pY, 1);
-            stoppedParticles.push([pX, pY]);
+            stoppedParticles.push([pX, pY, pZ]);
             particles[i] = null;
           } else {
             // Remove when reached bottom line
-            stoppedParticles.push([pX, pY]);
+            stoppedParticles.push([pX, pY, pZ]);
             particles[i] = null;
           }
         }
       }
+    }
+
+    if (this.debug) {
+      const updateTime = ts - this.lastDebugTime;
+      if (updateTime > 500) {
+        this.debugInfo.fps = Math.round(1000 / deltaTime);
+        this.lastDebugTime = ts;
+      }
+      ctx.font = '24px monospace';
+      ctx.fillStyle = 'rgb(255,255,0)';
+      ctx.fillText(`${this.debugInfo.fps}`, 100, 20);
     }
 
     this.animationFrameHandle = requestAnimationFrame((ts) =>
@@ -145,11 +181,11 @@ export class CanvasEffectSnow extends CanvasEffect {
 }
 
 function makeParticle(width: number, height: number, speed: number): Particle {
-  const velocityRatio = gaussianRandom();
-  const velocity = (velocityRatio + 0.5) * speed;
-  const alpha = velocityRatio + 0.1;
+  const z = gaussianRandom();
+  const velocity = (gaussianRandom() + 0.5) * speed;
+  const alpha = z + 0.1;
   const color = `rgba(240, 240, 250, ${alpha > 1 ? 1 : alpha})`;
   const x = Math.ceil(Math.random() * width);
   const y = x < 10 ? Math.random() * height : 0;
-  return [x, y, velocity, color, Math.random()];
+  return { x, y, z, velocity, color, rand: Math.random() };
 }

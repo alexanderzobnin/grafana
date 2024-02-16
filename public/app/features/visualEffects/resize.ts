@@ -64,7 +64,7 @@ export class LanczosFilter {
     } else {
       lanczosCore = lanczosFastCreate(lobes);
     }
-    let windowRadius = Math.ceil(lobes / scaleFactorY / 2);
+    // let windowRadius = Math.ceil(lobes / scaleFactorY / 2);
 
     const destImgY = new ImageData(oW, dH);
     const destDataY = destImgY.data;
@@ -96,7 +96,7 @@ export class LanczosFilter {
     const destImgX = new ImageData(dW, dH);
     const destDataX = destImgX.data;
     const rowSizeX = dW * 4;
-    windowRadius = Math.ceil(lobes / scaleFactorX / 2);
+    // windowRadius = Math.ceil(lobes / scaleFactorX / 2);
     destIdx = 0;
     let colorWeight = 0;
     // i is a column

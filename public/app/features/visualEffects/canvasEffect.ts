@@ -1,6 +1,11 @@
 export interface CanvasEffectOptions {
   debug?: boolean;
+  showDefinitionImage?: boolean;
   onAnimationCancel?: () => void;
+}
+
+interface DebugInfo {
+  fps: number;
 }
 
 export class CanvasEffect {
@@ -10,24 +15,29 @@ export class CanvasEffect {
   canvasWidth: number;
   canvasHeight: number;
   lastTime: number;
+  lastDebugTime: number;
   debug: boolean;
-
-  onAnimationCancel?: () => void;
+  debugInfo: DebugInfo;
+  showDefinitionImage?: boolean;
 
   constructor(canvas: HTMLCanvasElement, options: CanvasEffectOptions) {
-    const { onAnimationCancel, debug } = options;
+    const { debug, showDefinitionImage } = options;
     this.canvasWidth = canvas.width;
     this.canvasHeight = canvas.height;
     this.animationFrameHandle = 0;
-    this.onAnimationCancel = onAnimationCancel;
     this.lastTime = 0;
+    this.lastDebugTime = 0;
     this.debug = !!debug;
+    this.debugInfo = { fps: 0 };
+    this.showDefinitionImage = showDefinitionImage;
 
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
   }
 
   startAnimation() {}
+
+  onAnimationCancel() {}
 
   cancelAnimation() {
     cancelAnimationFrame(this.animationFrameHandle);

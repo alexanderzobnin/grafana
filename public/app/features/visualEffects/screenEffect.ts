@@ -34,7 +34,7 @@ export class CanvasEffectScreen extends CanvasEffect {
       return;
     }
 
-    const initialImage = ctx?.getImageData(0, 0, canvasWidth, canvasHeight);
+    // const initialImage = ctx?.getImageData(0, 0, canvasWidth, canvasHeight);
 
     // const definition = getImageDefinition(initialImage);
     // const defImageData = definitionToImageData(definition, initialImage.width);
@@ -70,7 +70,7 @@ export class CanvasEffectScreen extends CanvasEffect {
 
     const cellHeight0 = 5; // Height of RGB triplet
     const cellHeight1 = 1; // Blank after RGB triplet
-    const cellStagger = 3; // Offset of successive columns
+    // const cellStagger = 3; // Offset of successive columns
     const totalVertRes = numVertPixels * (cellHeight0 + cellHeight1);
     console.log(totalVertRes);
 

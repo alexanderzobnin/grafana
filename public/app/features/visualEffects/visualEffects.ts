@@ -25,6 +25,8 @@ async function startAnimation(effectObjects: CanvasEffect[], payload: AnimationE
           particlesNumber: payload.particlesNumber || 6000,
           speed: payload.speed || 2,
           wind: payload.wind || 0.05,
+          debug: payload.debug,
+          showDefinitionImage: payload.showDefinitionImage,
         });
         effectObjects.push(snowEffect);
 

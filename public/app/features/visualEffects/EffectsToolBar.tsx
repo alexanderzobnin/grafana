@@ -2,7 +2,18 @@ import { css } from '@emotion/css';
 import React, { useState } from 'react';
 
 import { GrafanaTheme2, SelectableValue } from '@grafana/data';
-import { Button, VerticalGroup, Dropdown, Menu, HorizontalGroup, useTheme2, Select, Slider, Field } from '@grafana/ui';
+import {
+  Button,
+  VerticalGroup,
+  Dropdown,
+  Menu,
+  HorizontalGroup,
+  useTheme2,
+  Select,
+  Slider,
+  Field,
+  Switch,
+} from '@grafana/ui';
 import appEvents from 'app/core/app_events';
 
 const effectsOptions: Array<SelectableValue<string>> = [
@@ -15,11 +26,19 @@ export const EffectsToolBar = () => {
   const [particlesNumber, setparticlesNumber] = useState(5000);
   const [speed, setSpeed] = useState(1);
   const [wind, setWind] = useState(0.5);
+  const [debug, setDebug] = useState(false);
+  const [showDefImage, setShowDefImage] = useState(false);
   const theme = useTheme2();
   const styles = getStyles(theme);
 
   const onStart = () => {
-    appEvents.emit('visual-effect-start', { effect: selectedEffect, particlesNumber, speed });
+    appEvents.emit('visual-effect-start', {
+      effect: selectedEffect,
+      particlesNumber,
+      speed,
+      debug,
+      showDefinitionImage: showDefImage,
+    });
   };
 
   const onStop = () => {
@@ -36,11 +55,11 @@ export const EffectsToolBar = () => {
       <Field label="Particles" description={particlesNumber} className={styles.label}>
         <Slider
           min={100}
-          max={20000}
+          max={40000}
           step={100}
           value={particlesNumber}
           onChange={(val) => setparticlesNumber(val)}
-          marks={{ 1000: '.', 5000: '.', 10000: '.' }}
+          marks={{ 1000: '.', 5000: '.', 10000: '.', 20000: '.' }}
         />
       </Field>
       <Field label="Speed" className={styles.label}>
@@ -81,6 +100,25 @@ export const EffectsToolBar = () => {
           </HorizontalGroup>
           {selectedEffect === 'snow' && snowControls}
           {selectedEffect === 'crt-display' && crtControls}
+          <HorizontalGroup>
+            <Field label="debug">
+              <Switch
+                label="debug"
+                value={debug}
+                onChange={() => {
+                  setDebug(!debug);
+                }}
+              />
+            </Field>
+            <Field label="show definition image">
+              <Switch
+                value={showDefImage}
+                onChange={() => {
+                  setShowDefImage(!showDefImage);
+                }}
+              />
+            </Field>
+          </HorizontalGroup>
         </VerticalGroup>
       </div>
     </Menu>
