@@ -72,7 +72,7 @@ export class CanvasEffectScreen extends CanvasEffect {
     const cellHeight1 = 1; // Blank after RGB triplet
     // const cellStagger = 3; // Offset of successive columns
     const totalVertRes = numVertPixels * (cellHeight0 + cellHeight1);
-    console.log(totalVertRes);
+    console.log('Total vertical lines', totalVertRes);
 
     const lanczos = new LanczosFilter(2);
     const startTs = performance.now();
@@ -81,7 +81,7 @@ export class CanvasEffectScreen extends CanvasEffect {
     console.log(`Resize time: ${Math.floor(performance.now() - startTs)} ms`);
     console.log(resizedImage.width, resizedImage.height, resizedImage.data.length);
 
-    convertImageGamma(resizedImage, 2);
+    convertImageGamma(resizedImage, 4);
 
     const startTsNNResize = performance.now();
     resizedImage = nearestNeighborResize(resizedImage, totalHorizRes, totalVertRes);
@@ -91,7 +91,7 @@ export class CanvasEffectScreen extends CanvasEffect {
     resizedImage = applyScanLines(resizedImage, scanLinesCount);
     resizedImage = applyPixelMask(resizedImage, CellWidth0, cellHeight0, CellBlank0, CellBlank0);
 
-    // resizedImage = lanczos.resize(resizedImage, image.width, image.height);
+    resizedImage = lanczos.resize(resizedImage, image.width, image.height);
 
     console.log(`Total time: ${Math.floor(performance.now() - startTs)} ms`);
 

@@ -22,7 +22,7 @@ const effectsOptions: Array<SelectableValue<string>> = [
 ];
 
 export const EffectsToolBar = () => {
-  const [selectedEffect, setSelectedEffect] = useState('snow');
+  const [selectedEffect, setSelectedEffect] = useState(effectsOptions[1].value);
   const [particlesNumber, setparticlesNumber] = useState(5000);
   const [speed, setSpeed] = useState(1);
   const [wind, setWind] = useState(0.5);

@@ -114,12 +114,11 @@ export class CanvasEffectSnow extends CanvasEffect {
       const p = stoppedParticles[i];
       const yRel = p[1] / this.canvasHeight;
       const redIndex = (p[1] * width + p[0]) * 4;
-      let rg = 240;
       const colorChance = Math.random();
-      rg = 240 + colorChance * 10 * (p[2] * 0.4 + 0.6) * (yRel * 0.4 + 0.6);
+      const rg = 200 + colorChance * 10 + yRel * 40;
       image.data[redIndex] = rg;
       image.data[redIndex + 1] = rg;
-      image.data[redIndex + 2] = 250;
+      image.data[redIndex + 2] = rg;
       image.data[redIndex + 3] = 255;
     }
     stoppedParticles = [];
@@ -138,24 +137,25 @@ export class CanvasEffectSnow extends CanvasEffect {
         const defPoint = getDefinitionPoint(definition, width, p.x, p.y + 1);
         const pointOnLeft = getDefinitionPoint(definition, width, p.x - 1, p.y + 1);
         const pointOnRight = getDefinitionPoint(definition, width, p.x + 1, p.y + 1);
+        const pointOnTop = getDefinitionPoint(definition, width, p.x, p.y - 1);
         const yRel = p.y / this.canvasHeight;
-        const chanceToStick = Math.random() * (pointOnLeft + pointOnRight - 0.9) * (1.5 - p.z) * (yRel + 0.5);
+        const chanceToStick = Math.random() * (defPoint + pointOnLeft + pointOnRight - 1.6) * (yRel * 0.4 + 0.6);
         // const chanceToStick = Math.random() * (p.y / this.canvasHeight * 2);
-        if (defPoint === 1 && chanceToStick > 0.95) {
+        if (defPoint === 1 && pointOnTop !== 1 && chanceToStick > 0.91) {
           // stop particle
           setDefinitionPoint(definition, width, pX, pY, 1);
           stoppedParticles.push([pX, pY, pZ]);
-          particles[i] = null;
+          // particles[i] = null;
         } else if (p.y < this.canvasHeight - 1) {
           p.x += (Math.sin(p.y / ((p.rand + 0.3) * 20 * speed * 4) + p.rand * 10) + wind) * p.velocity * p.z;
           p.y += p.velocity * (p.z + 1);
         } else {
+          // Remove when reached bottom line
           if (Math.random() > 0) {
             setDefinitionPoint(definition, width, pX, pY, 1);
             stoppedParticles.push([pX, pY, pZ]);
             particles[i] = null;
           } else {
-            // Remove when reached bottom line
             stoppedParticles.push([pX, pY, pZ]);
             particles[i] = null;
           }
