@@ -64,7 +64,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // @grafana/alerting-backend
 	github.com/golang-jwt/jwt/v4 v4.5.1 // @grafana/grafana-backend-group
 	github.com/golang-migrate/migrate/v4 v4.7.0 // @grafana/grafana-backend-group
-	github.com/golang/mock v1.6.0 // @grafana/alerting-backend
+	github.com/golang/mock v1.7.0-rc.1 // @grafana/alerting-backend
 	github.com/golang/protobuf v1.5.4 // @grafana/grafana-backend-group
 	github.com/golang/snappy v0.0.4 // @grafana/alerting-backend
 	github.com/google/go-cmp v0.6.0 // @grafana/grafana-backend-group

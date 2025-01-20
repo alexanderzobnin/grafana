@@ -43,7 +43,7 @@ require (
 	golang.org/x/text v0.20.0 // indirect; @grafana/grafana-backend-group
 	golang.org/x/time v0.6.0 // indirect; @grafana/grafana-backend-group
 	google.golang.org/api v0.193.0 // @grafana/grafana-backend-group
-	google.golang.org/grpc v1.67.1 // indirect; @grafana/plugins-platform-backend
+	google.golang.org/grpc v1.69.4 // indirect; @grafana/plugins-platform-backend
 	google.golang.org/protobuf v1.35.2 // indirect; @grafana/plugins-platform-backend
 	gopkg.in/yaml.v3 v3.0.1 // @grafana/alerting-backend
 )
@@ -52,7 +52,7 @@ require (
 	cloud.google.com/go v0.115.1 // indirect
 	cloud.google.com/go/auth v0.9.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.4 // indirect
-	cloud.google.com/go/compute/metadata v0.5.0 // indirect
+	cloud.google.com/go/compute/metadata v0.5.2 // indirect
 	cloud.google.com/go/iam v1.2.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
