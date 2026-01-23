@@ -454,7 +454,7 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect; @grafana-app-platform-squad
 )
 
-require github.com/phpdave11/gofpdi v1.0.13 // @grafana/sharing-squad
+require github.com/phpdave11/gofpdi v1.0.15 // @grafana/sharing-squad
 
 require (
 	github.com/google/go-querystring v1.1.0 // indirect; @grafana/observability-metrics
