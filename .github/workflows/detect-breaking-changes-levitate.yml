@@ -59,7 +59,7 @@ jobs:
         run: zip -r ./pr_built_packages.zip ./packages/**/*.tgz
 
       - name: Upload build output as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: buildPr
           path: './pr/pr_built_packages.zip'
@@ -107,7 +107,7 @@ jobs:
         run: zip -r ./base_built_packages.zip ./packages/**/*.tgz
 
       - name: Upload build output as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: buildBase
           path: './base/base_built_packages.zip'
@@ -170,7 +170,7 @@ jobs:
             echo "{ \"exit_code\": ${{ steps.breaking-changes.outputs.is_breaking }}, \"message\": \"${{ steps.breaking-changes.outputs.message }}\", \"pr_number\": \"${{ github.event.pull_request.number }}\" }" > ./levitate/result.json
 
       - name: Upload check output as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: levitate
           path: levitate/
