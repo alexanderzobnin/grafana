@@ -5,7 +5,7 @@ go 1.23.1
 require (
 	github.com/grafana/grafana-app-sdk v0.23.1
 	k8s.io/apimachinery v0.31.3
-	k8s.io/klog/v2 v2.130.1
+	k8s.io/klog/v2 v2.140.0
 	k8s.io/kube-openapi v0.0.0-20240228011516-70dd3763d340
 )
 
