@@ -238,7 +238,7 @@ jobs:
       # Comment on the PR
       - name: Comment on PR
         if: steps.levitate-run.outputs.exit_code == 1
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: levitate-breaking-change-comment
           number: ${{ github.event.pull_request.number }}
@@ -255,7 +255,7 @@ jobs:
       # Remove comment from the PR (no more breaking changes)
       - name: Remove comment from PR
         if: steps.levitate-run.outputs.exit_code == 0
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: levitate-breaking-change-comment
           number: ${{ github.event.pull_request.number }}
