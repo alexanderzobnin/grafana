@@ -31,7 +31,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout Grafana repo"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           # required for the `grafana/grafana-github-actions/has-matching-release-tag` action to work
           fetch-depth: 0
@@ -45,7 +45,7 @@ jobs:
         run: go run .github/workflows/scripts/kinds/verify-kinds.go
 
       - name: "Checkout Actions library"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           repository: "grafana/grafana-github-actions"
           path: "./actions"
