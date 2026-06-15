@@ -46,7 +46,7 @@ jobs:
 
     - if: matrix.language == 'go'
       name: Set go version
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v6
       with:
         go-version-file: go.mod
 
