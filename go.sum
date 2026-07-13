@@ -1857,8 +1857,8 @@ github.com/elazarl/goproxy v0.0.0-20240726154733-8b0c20506380/go.mod h1:thX175Tt
 github.com/elazarl/goproxy/ext v0.0.0-20220115173737-adb46da277ac h1:9yrT5tmn9Zc0ytWPASlaPwQfQMQYnRf0RSDe1XvHw0Q=
 github.com/elazarl/goproxy/ext v0.0.0-20220115173737-adb46da277ac/go.mod h1:gNh8nYJoAm43RfaxurUnxr+N1PwuFV3ZMl/efxlIlY8=
 github.com/emicklei/go-restful/v3 v3.8.0/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
-github.com/emicklei/go-restful/v3 v3.11.0 h1:rAQeMHw1c7zTmncogyy8VvRZwtkmkZ4FxERmMY4rD+g=
 github.com/emicklei/go-restful/v3 v3.11.0/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
+github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
 github.com/emicklei/proto v1.13.2 h1:z/etSFO3uyXeuEsVPzfl56WNgzcvIr42aQazXaQmFZY=
 github.com/emicklei/proto v1.13.2/go.mod h1:rn1FgRS/FANiZdD2djyH7TMA9jdRDcYQ9IEN9yvjX0A=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=

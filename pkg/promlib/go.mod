@@ -34,7 +34,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dennwc/varint v1.0.0 // indirect
 	github.com/elazarl/goproxy v0.0.0-20240726154733-8b0c20506380 // indirect
-	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
+	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect

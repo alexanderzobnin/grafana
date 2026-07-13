@@ -266,7 +266,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/edsrzf/mmap-go v1.1.0 // indirect
 	github.com/elazarl/goproxy v0.0.0-20240726154733-8b0c20506380 // indirect
-	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
+	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 	github.com/emicklei/proto v1.13.2 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.1.0 // indirect
 	github.com/facette/natsort v0.0.0-20181210072756-2cd4dd1e2dcb // indirect
