@@ -28,7 +28,7 @@ jobs:
 
       - name: Download sources
         id: crowdin-download
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@v3
         with:
           upload_sources: false
           upload_translations: false
