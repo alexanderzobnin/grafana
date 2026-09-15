@@ -68,7 +68,7 @@ jobs:
           app_id: ${{ secrets.GRAFANA_DELIVERY_BOT_APP_ID }}
           private_key: ${{ secrets.GRAFANA_DELIVERY_BOT_APP_PEM }}
       - name: "Checkout Grafana repo"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
         with:
           ref: main
           sparse-checkout: |
