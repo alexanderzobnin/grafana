@@ -21,7 +21,7 @@ jobs:
     steps:
 
       - name: Checkout Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: "grafana/grafana-github-actions"
           path: ./actions
@@ -83,7 +83,7 @@ jobs:
           private_key: ${{ env.GH_APP_PEM }}
 
       - name: Checkout auto-triager repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: grafana/auto-triager
           path: auto-triager

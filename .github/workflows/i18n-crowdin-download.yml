@@ -21,7 +21,7 @@ jobs:
           app_id: ${{ secrets.GRAFANA_PR_AUTOMATION_APP_ID }}
           private_key: ${{ secrets.GRAFANA_PR_AUTOMATION_APP_PEM }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.head_ref }}
           token: ${{ steps.generate_token.outputs.token }}

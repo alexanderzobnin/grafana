@@ -52,7 +52,7 @@ jobs:
           private_key: ${{ env.GH_APP_PEM }}
 
       - name: Checkout Actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: "grafana/grafana-github-actions"
           path: ./actions
